@@ -1,5 +1,10 @@
 ---
-import type { NavKey } from '@/data/navigation'
+import { HEADER_LINKS, type NavKey } from '@/data/navigation'
+import Logo from '@/img/icons/logo.svg'
+import LogoMuted from '@/img/icons/logo-muted.svg'
+import User from '@/img/icons/user.svg'
+import Search from '@/img/icons/search.svg'
+import Basket from '@/img/icons/basket.svg'
 
 interface Props {
   theme: 'dark' | 'light'
@@ -7,43 +12,88 @@ interface Props {
   cartCount?: number
 }
 
-const { theme } = Astro.props
+const { theme, current, cartCount } = Astro.props
 
-const LINKS = [
-  { href: '#sample', label: 'Раздел' },
-  { href: '#request', label: 'Заявка' },
-  { href: '#contacts', label: 'Контакты' },
-]
+const LogoIcon = theme === 'dark' ? Logo : LogoMuted
+
+const ariaCurrentOf = (link: (typeof HEADER_LINKS)[number]) => {
+  if (link.key !== current) return undefined
+
+  return link.href === Astro.url.pathname ? 'page' : 'true'
+}
+
+const cartLabel =
+  cartCount === undefined ? 'Корзина' : `Корзина, товаров: ${String(cartCount)}`
 ---
 
-<header class="header" data-theme={theme}>
-  <div class="container row">
-    <a class="logo" href="/">Лендинг</a>
+<header class:list={['header', `theme-${theme}`]}>
+  <div class="container">
+    <div class="row wide-row">
+      <a class="logo" href="/">
+        <LogoIcon class="logo-image" aria-hidden="true" />
+        <span class="visually-hidden">Chopper Bikeshop — на главную</span>
+      </a>
 
-    <details class="menu" data-menu>
-      <summary
-        class="menu-toggle"
-        data-menu-toggle
-        data-menu-label-open="Открыть меню"
-        data-menu-label-close="Закрыть меню"
-      >
-        <span class="visually-hidden" data-menu-label>Открыть меню</span>
-        <span class="burger" aria-hidden="true"></span>
-      </summary>
-      <nav class="nav" aria-label="Разделы страницы">
-        <ul class="nav-list">
-          {
-            LINKS.map((link) => (
-              <li>
-                <a class="nav-link" href={link.href}>
-                  {link.label}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
-    </details>
+      <details class="menu" data-menu>
+        <summary
+          class="menu-toggle"
+          data-menu-toggle
+          data-menu-label-open="Открыть меню"
+          data-menu-label-close="Закрыть меню"
+        >
+          <span class="visually-hidden" data-menu-label>Открыть меню</span>
+          <span class="burger" aria-hidden="true"></span>
+        </summary>
+        <nav class="nav" aria-label="Разделы магазина">
+          <ul class="nav-list">
+            {
+              HEADER_LINKS.map((link) => (
+                <li>
+                  <a
+                    class:list={[
+                      'nav-link',
+                      { 'small-caps': theme === 'light' },
+                    ]}
+                    href={link.href}
+                    aria-current={ariaCurrentOf(link)}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </details>
+
+      <ul class="tools">
+        <li>
+          <button class="tool" type="button">
+            <User aria-hidden="true" />
+            <span class="visually-hidden">Личный кабинет пользователя</span>
+          </button>
+        </li>
+        <li>
+          <button class="tool" type="button">
+            <Search aria-hidden="true" />
+            <span class="visually-hidden">Поиск</span>
+          </button>
+        </li>
+        <li>
+          <button class="tool" type="button">
+            <Basket aria-hidden="true" />
+            <span class="visually-hidden">{cartLabel}</span>
+            {
+              cartCount !== undefined && (
+                <span class="count" aria-hidden="true">
+                  {cartCount}
+                </span>
+              )
+            }
+          </button>
+        </li>
+      </ul>
+    </div>
   </div>
 </header>
 
@@ -55,37 +105,140 @@ const LINKS = [
 
 <style>
   .header {
+    --header-ring: var(--color-accent);
+    --header-hover: var(--color-text);
+    --header-panel: var(--color-bg);
+    --header-gap: 30.5px;
+
     position: relative;
-    z-index: 1;
-    padding-block: 16px;
+    z-index: 10;
+  }
+
+  .theme-dark {
+    --header-ring: var(--color-text-inverse);
+    --header-hover: var(--color-accent-inverse);
+    --header-panel: var(--color-surface-inverse);
+    --header-gap: 24.5px;
+
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
   }
 
   .row {
     display: flex;
-    gap: 12px;
+    gap: 24px;
     align-items: center;
-    min-block-size: 36px;
+    block-size: 104px;
+  }
+
+  .theme-light .row {
+    box-sizing: content-box;
+    border-block-end: var(--rule-width) solid var(--color-rule);
   }
 
   .logo {
+    flex: 0 1 184px;
+    min-inline-size: 0;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+  }
+
+  .logo-image {
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .logo:focus-visible,
+  .tool:focus-visible,
+  .menu-toggle:focus-visible,
+  .nav-link:focus-visible {
+    outline: 2px solid var(--header-ring);
+    outline-offset: 4px;
+  }
+
+  .tools {
+    display: flex;
     flex: none;
-    margin-inline-end: auto;
-    font-weight: 700;
-    font-size: 20px;
-    line-height: 36px;
+    column-gap: 24px;
+    align-items: center;
+  }
+
+  .tools li:first-child {
+    margin-inline-end: 4px;
+  }
+
+  .tool {
+    position: relative;
+    display: block;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    transition: transform 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .tool::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    inline-size: 44px;
+    block-size: 44px;
+    translate: -50% -50%;
+  }
+
+  .tool:active {
+    transform: scale(0.97);
+    transition-duration: 90ms;
+  }
+
+  .count {
+    position: absolute;
+    inset-block-start: calc(100% + 1.5px);
+    inset-inline-start: 10px;
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: var(--text-body-s-size);
+    line-height: var(--text-body-s-leading);
+    color: var(--color-accent);
   }
 
   .nav-link {
     display: block;
-    font-size: 14px;
+    padding-block: 13px;
+    font-family: var(--font-head);
+    font-weight: 400;
+    font-size: var(--text-nav-size);
+    line-height: var(--text-nav-leading);
+    letter-spacing: var(--text-nav-tracking);
     white-space: nowrap;
+    color: var(--color-text-muted);
     user-select: none;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
     transition: color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
   }
 
-  @media (width < 1024px) {
+  .theme-dark .nav-link {
+    text-transform: uppercase;
+  }
+
+  .nav-link[aria-current] {
+    color: var(--color-accent);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .tool:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  @media (width < 1179px) {
+    .logo {
+      margin-inline-end: auto;
+    }
+
     .menu {
       flex: none;
     }
@@ -94,17 +247,13 @@ const LINKS = [
       position: relative;
       display: grid;
       place-content: center;
-      inline-size: 36px;
-      block-size: 36px;
-      border: 1px solid var(--color-border-chip);
-      border-radius: var(--radius-control);
-      background-color: var(--color-surface-chip);
+      inline-size: 24px;
+      block-size: 24px;
       list-style: none;
       cursor: pointer;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      transition: background-color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
     }
 
     .menu-toggle::-webkit-details-marker {
@@ -114,21 +263,7 @@ const LINKS = [
     .menu-toggle::after {
       content: '';
       position: absolute;
-      inset: -4px;
-    }
-
-    .menu-toggle:focus-visible {
-      outline: 2px solid var(--color-accent);
-      outline-offset: 3px;
-    }
-
-    .menu-toggle:active {
-      background-color: color-mix(
-        in srgb,
-        var(--color-surface-chip) 86%,
-        var(--color-text)
-      );
-      transition-duration: 90ms;
+      inset: -10px;
     }
 
     .burger,
@@ -136,8 +271,7 @@ const LINKS = [
     .burger::after {
       inline-size: 20px;
       block-size: 2px;
-      border-radius: 1px;
-      background-color: var(--color-text);
+      background-color: var(--color-text-muted);
       transition:
         transform 180ms cubic-bezier(0.2, 0.8, 0.25, 1),
         background-color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
@@ -162,21 +296,22 @@ const LINKS = [
       inset-block-start: 6px;
     }
 
-    @media (hover: hover) and (pointer: fine) {
-      .menu-toggle:hover {
-        background-color: color-mix(
-          in srgb,
-          var(--color-surface-chip) 92%,
-          var(--color-text)
-        );
-      }
+    .menu-toggle:active .burger,
+    .menu-toggle:active .burger::before,
+    .menu-toggle:active .burger::after {
+      background-color: var(--header-hover);
+      transition-duration: 90ms;
+    }
 
-      .menu[open] .menu-toggle:hover .burger {
-        background-color: transparent;
+    @media (hover: hover) and (pointer: fine) {
+      .menu-toggle:hover .burger::before,
+      .menu-toggle:hover .burger::after {
+        background-color: var(--header-hover);
       }
     }
 
-    .menu[open] .burger {
+    .menu[open] .burger,
+    .menu[open] .menu-toggle:active .burger {
       background-color: transparent;
     }
 
@@ -196,13 +331,16 @@ const LINKS = [
       position: absolute;
       inset-inline: 0;
       inset-block-start: 100%;
-      z-index: 10;
+      z-index: 1;
       block-size: 0;
-      border-end-end-radius: var(--radius-tab);
-      border-end-start-radius: var(--radius-tab);
-      background-color: var(--color-surface-inverse);
-      overflow: hidden;
+      max-block-size: calc(100dvh - 100%);
+      background-color: var(--header-panel);
+      overflow: hidden auto;
       transition: block-size 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+    }
+
+    .theme-light .nav {
+      border-block-end: var(--rule-width) solid var(--color-rule);
     }
 
     .menu[open] .nav {
@@ -210,34 +348,64 @@ const LINKS = [
     }
 
     .nav-list {
-      max-block-size: calc(100dvh - var(--header-height));
-      padding: 8px 16px 16px;
-      overflow-y: auto;
+      padding-block: 8px 16px;
+      padding-inline: var(--layout-gutter);
     }
 
     .nav-link {
-      padding-block: 10px;
-      padding-inline: 8px;
-      border-radius: var(--radius-control);
-      color: var(--color-text-inverse-muted);
       transition-property: color, background-color;
     }
 
-    @media (hover: hover) and (pointer: fine) {
-      .nav-link:hover {
-        color: var(--color-text-inverse);
-      }
+    .nav-link:active {
+      background-color: color-mix(
+        in srgb,
+        var(--header-panel) 92%,
+        var(--header-hover)
+      );
+      color: var(--header-hover);
+      transition-duration: 90ms;
     }
 
-    .nav-link:active {
-      background-color: var(--color-surface-glass);
-      color: var(--color-text-inverse);
+    @media (hover: hover) and (pointer: fine) {
+      .nav-link:not([aria-current]):hover {
+        color: var(--header-hover);
+      }
     }
   }
 
-  @media (width >= 1024px) {
-    .menu {
-      flex: 1;
+  @media (width >= 1179px) {
+    .header {
+      --header-slack: min(100vw - 1179px, 12px);
+    }
+
+    .row {
+      column-gap: var(--header-gap);
+      justify-content: space-between;
+    }
+
+    .theme-light .menu {
+      margin-inline-end: calc(var(--header-slack) / 2);
+    }
+
+    .theme-light .nav-list li:nth-child(3) {
+      margin-inline-start: calc(var(--header-slack) * 5 / 12);
+    }
+
+    .theme-light .nav-list li:nth-child(5) {
+      margin-inline-start: calc(var(--header-slack) / 12);
+    }
+
+    .theme-dark .nav-list li:nth-child(3) {
+      margin-inline-start: 4.5px;
+    }
+
+    .theme-dark .nav-list li:nth-child(4),
+    .theme-dark .nav-list li:nth-child(5) {
+      margin-inline-start: 1px;
+    }
+
+    .theme-dark .nav-list li:nth-child(6) {
+      margin-inline-start: -2.5px;
     }
 
     .menu-toggle {
@@ -251,42 +419,34 @@ const LINKS = [
 
     .nav-list {
       display: flex;
-      gap: 32px;
-      justify-content: flex-end;
+      column-gap: var(--header-gap);
     }
 
     .nav-link {
       position: relative;
-      color: var(--color-text-muted);
       transition-property: color, transform;
     }
 
     .nav-link::after {
       content: '';
       position: absolute;
-      inset-block-end: -4px;
+      inset-block-end: 9px;
       inset-inline: 0;
-      block-size: 2px;
-      border-radius: 1px;
+      block-size: var(--rule-width);
       background-color: currentcolor;
       transform: scaleX(0);
       transform-origin: right;
       transition: transform 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
     }
 
-    .nav-link:focus-visible {
-      outline: 2px solid var(--color-accent);
-      outline-offset: 4px;
-    }
-
     .nav-link:active {
-      color: var(--color-text);
       transform: scale(0.97);
+      transition-duration: 90ms;
     }
 
     @media (hover: hover) and (pointer: fine) {
-      .nav-link:hover {
-        color: var(--color-text);
+      .nav-link:not([aria-current]):hover {
+        color: var(--header-hover);
       }
 
       .nav-link:hover::after {
@@ -300,7 +460,7 @@ const LINKS = [
     .nav,
     .nav-link,
     .nav-link::after,
-    .menu-toggle,
+    .tool,
     .burger,
     .burger::before,
     .burger::after,
@@ -308,7 +468,8 @@ const LINKS = [
       transition: none;
     }
 
-    .nav-link:active {
+    .nav-link:active,
+    .tool:active {
       transform: none;
     }
   }

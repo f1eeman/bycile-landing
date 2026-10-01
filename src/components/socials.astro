@@ -1,0 +1,106 @@
+---
+import Vk from '@/img/icons/vk.svg'
+import VkGold from '@/img/icons/vk-gold.svg'
+import VkMuted from '@/img/icons/vk-muted.svg'
+import Facebook from '@/img/icons/facebook.svg'
+import FacebookGold from '@/img/icons/facebook-gold.svg'
+import FacebookMuted from '@/img/icons/facebook-muted.svg'
+import Instagram from '@/img/icons/instagram.svg'
+import InstagramGold from '@/img/icons/instagram-gold.svg'
+import InstagramMuted from '@/img/icons/instagram-muted.svg'
+
+interface Props {
+  class?: string
+  tone?: 'promo' | 'dark' | 'light'
+}
+
+const { class: className, tone = 'promo' } = Astro.props
+
+const LINKS = [
+  {
+    href: 'https://vk.com/',
+    label: 'Вконтакте',
+    icons: { promo: Vk, dark: VkGold, light: VkMuted },
+  },
+  {
+    href: 'https://www.facebook.com/',
+    label: 'Фейсбук',
+    icons: { promo: Facebook, dark: FacebookGold, light: FacebookMuted },
+  },
+  {
+    href: 'https://www.instagram.com/',
+    label: 'Инстаграм',
+    icons: { promo: Instagram, dark: InstagramGold, light: InstagramMuted },
+  },
+] as const
+---
+
+<ul class:list={['socials', `tone-${tone}`, className]}>
+  {
+    LINKS.map((link) => {
+      const Icon = link.icons[tone]
+
+      return (
+        <li>
+          <a class="link" href={link.href}>
+            <Icon aria-hidden="true" />
+            <span class="visually-hidden">{link.label}</span>
+          </a>
+        </li>
+      )
+    })
+  }
+</ul>
+
+<style>
+  .socials {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+  }
+
+  .link {
+    position: relative;
+    display: block;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    transition: transform 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .link::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    inline-size: 39px;
+    block-size: 44px;
+    translate: -50% -50%;
+  }
+
+  .link:focus-visible {
+    outline: 2px solid var(--color-text-inverse);
+    outline-offset: 3px;
+  }
+
+  .tone-light .link:focus-visible {
+    outline-color: var(--color-accent);
+  }
+
+  .link:active {
+    transform: scale(0.97);
+    transition-duration: 90ms;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .link:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .link {
+      transition: none;
+    }
+  }
+</style>

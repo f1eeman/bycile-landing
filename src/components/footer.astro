@@ -1,92 +1,199 @@
 ---
+import { FOOTER_LINKS } from '@/data/navigation'
+import Socials from '@/components/socials.astro'
+import Logo from '@/img/icons/logo.svg'
+import LogoMuted from '@/img/icons/logo-muted.svg'
+
 interface Props {
   theme: 'dark' | 'light'
 }
 
 const { theme } = Astro.props
 
-const YEAR = new Date().getFullYear()
-
-const COMPANY = 'Название организации'
-const EMAIL = 'mail@example.invalid'
-const PHONE = { href: '+70000000000', label: '+7 000 000 00 00' }
+const LogoIcon = theme === 'dark' ? Logo : LogoMuted
 ---
 
-<footer class="footer" data-theme={theme}>
-  <div class="container inner">
-    <section class="contacts" id="contacts" aria-labelledby="contacts-title">
-      <h2 class="title" id="contacts-title">Контакты</h2>
-      <ul class="list">
-        <li>
-          <a class="link" href={`mailto:${EMAIL}`}>{EMAIL}</a>
-        </li>
-        <li>
-          <a class="link" href={`tel:${PHONE.href}`}>{PHONE.label}</a>
-        </li>
-      </ul>
-    </section>
+<footer class:list={['footer', `theme-${theme}`]}>
+  <div class="container">
+    <div class="footer-column">
+      <nav class="nav" aria-label="Разделы магазина в подвале">
+        <ul class="nav-list">
+          {
+            FOOTER_LINKS.map((link) => (
+              <li>
+                <a class="nav-link small-caps" href={link.href}>
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
 
-    <p class="copyright">© {YEAR} {COMPANY}</p>
+      <div class="bottom">
+        <section
+          class="contacts"
+          id="contacts"
+          aria-labelledby="contacts-title"
+        >
+          <h2 class="visually-hidden" id="contacts-title">Контакты</h2>
+          <Socials tone={theme} />
+        </section>
+
+        <a class="logo" href="/">
+          <LogoIcon aria-hidden="true" />
+          <span class="visually-hidden">Chopper Bikeshop — на главную</span>
+        </a>
+
+        <p class="legal">
+          <span>©2018</span>
+          <span class="divider" aria-hidden="true">|</span>
+          <a class="legal-link" href="/privacy/">Политика конфиденциальности</a>
+        </p>
+      </div>
+    </div>
   </div>
 </footer>
 
 <style>
   .footer {
-    padding-block: 40px;
+    --footer-ink: var(--color-text-muted);
+    --footer-hover: var(--color-text);
+    --footer-ring: var(--color-accent);
+    --footer-rule: var(--color-rule);
+
+    color: var(--footer-ink);
+  }
+
+  .theme-dark {
+    --footer-ink: var(--color-accent-inverse);
+    --footer-hover: var(--color-text-inverse);
+    --footer-ring: var(--color-text-inverse);
+    --footer-rule: var(--color-rule-inverse);
+
     background-color: var(--color-surface-inverse);
-    color: var(--color-text-inverse);
   }
 
-  .inner {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
+  .nav {
+    border-block: var(--rule-width) solid var(--footer-rule);
   }
 
-  .title {
-    font-weight: 600;
-    font-size: 20px;
-    line-height: 24px;
+  .nav-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 16px;
+    padding-block: 8px;
   }
 
-  .list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-block-start: 16px;
-  }
-
-  .link {
-    color: var(--color-text-inverse-muted);
+  .nav-link {
+    display: block;
+    padding-block: 13px;
+    font-family: var(--font-head);
+    font-weight: 400;
+    font-size: var(--text-nav-size);
+    line-height: var(--text-nav-leading);
+    letter-spacing: var(--text-nav-tracking);
+    color: var(--footer-ink);
+    user-select: none;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
     transition: color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
   }
 
-  @media (hover: hover) and (pointer: fine) {
-    .link:hover {
-      color: var(--color-text-inverse);
-    }
+  .bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+    padding-block: 34px 48px;
   }
 
-  .link:focus-visible {
-    outline: 2px solid var(--color-text-inverse);
+  .logo {
+    display: block;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+  }
+
+  .legal {
+    font-size: var(--text-body-s-size);
+    line-height: var(--text-body-s-leading);
+    text-align: center;
+  }
+
+  .divider {
+    margin-inline: 11px;
+  }
+
+  .legal-link {
+    padding-block: 13px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .nav-link:focus-visible,
+  .logo:focus-visible,
+  .legal-link:focus-visible {
+    outline: 2px solid var(--footer-ring);
     outline-offset: 3px;
   }
 
-  .link:active {
-    color: var(--color-text-inverse);
+  .nav-link:active,
+  .legal-link:active {
+    color: var(--footer-hover);
     transition-duration: 90ms;
   }
 
-  .copyright {
-    color: var(--color-text-inverse-muted);
-    font-size: 14px;
-    line-height: 20px;
+  @media (hover: hover) and (pointer: fine) {
+    .nav-link:hover,
+    .legal-link:hover {
+      color: var(--footer-hover);
+    }
+  }
+
+  @media (width >= 575px) {
+    .nav-list {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (width >= 1179px) {
+    .nav-list {
+      display: flex;
+      column-gap: 30.5px;
+      justify-content: space-between;
+      padding-block: 21.5px 18.5px;
+    }
+
+    .nav-list li:nth-child(3) {
+      margin-inline-start: 2px;
+    }
+
+    .nav-link {
+      margin-block: -13px;
+      white-space: nowrap;
+    }
+
+    .bottom {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0;
+    }
+
+    .contacts {
+      justify-self: start;
+    }
+
+    .legal {
+      justify-self: end;
+      text-align: end;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .link {
+    .nav-link,
+    .legal-link {
       transition: none;
     }
   }
