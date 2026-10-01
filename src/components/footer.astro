@@ -1,4 +1,10 @@
 ---
+interface Props {
+  theme: 'dark' | 'light'
+}
+
+const { theme } = Astro.props
+
 const YEAR = new Date().getFullYear()
 
 const COMPANY = 'Название организации'
@@ -6,7 +12,7 @@ const EMAIL = 'mail@example.invalid'
 const PHONE = { href: '+70000000000', label: '+7 000 000 00 00' }
 ---
 
-<footer class="footer">
+<footer class="footer" data-theme={theme}>
   <div class="container inner">
     <section class="contacts" id="contacts" aria-labelledby="contacts-title">
       <h2 class="title" id="contacts-title">Контакты</h2>

@@ -1,0 +1,19 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import Breadcrumbs from '@/components/breadcrumbs.astro'
+import ProductInfo from '@/components/product-info.astro'
+import ProductTabs from '@/components/product-tabs.astro'
+import Related from '@/components/related.astro'
+
+const title = 'Седло Steed G67 — Chopper Bikeshop'
+const description =
+  'Седло Steed G67: в комплекте ключ для регулировки, газета с полезной информацией и фирменная картонная упаковка. Гарантия 1 год.'
+---
+
+<Layout {title} {description} theme="light" current="accessories" cartCount={1}>
+  <h1 class="visually-hidden">Седло Steed G67</h1>
+  <Breadcrumbs />
+  <ProductInfo />
+  <ProductTabs />
+  <Related />
+</Layout>

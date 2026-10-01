@@ -1,0 +1,19 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import ShopBar from '@/components/shop-bar.astro'
+import CatalogFilter from '@/components/catalog-filter.astro'
+import CatalogGrid from '@/components/catalog-grid.astro'
+import Pagination from '@/components/pagination.astro'
+
+const title = 'Каталог велосипедов — Chopper Bikeshop'
+const description =
+  'Каталог велосипедов Chopper Bikeshop: фильтр по цене, материалу рамы, цвету и колёсам.'
+---
+
+<Layout {title} {description} theme="light" current="bikes">
+  <h1 class="visually-hidden">Выбор велосипеда</h1>
+  <ShopBar />
+  <CatalogFilter />
+  <CatalogGrid />
+  <Pagination />
+</Layout>

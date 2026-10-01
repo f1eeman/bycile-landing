@@ -7,25 +7,35 @@ export default defineConfig({
   fonts: [
     {
       provider: fontProviders.local(),
-      name: 'Open Sans',
-      cssVariable: '--font-open-sans',
+      name: 'Roboto Serif',
+      cssVariable: '--font-roboto-serif',
+      fallbacks: ['serif'],
+      options: {
+        variants: [
+          {
+            weight: 400,
+            style: 'normal',
+            src: ['./src/assets/fonts/roboto-serif.woff2'],
+          },
+        ],
+      },
+    },
+    {
+      provider: fontProviders.local(),
+      name: 'Roboto',
+      cssVariable: '--font-roboto',
       fallbacks: ['sans-serif'],
       options: {
         variants: [
           {
             weight: 400,
             style: 'normal',
-            src: ['./src/assets/fonts/open-sans-400.woff2'],
+            src: ['./src/assets/fonts/roboto-400.woff2'],
           },
           {
-            weight: 600,
+            weight: 300,
             style: 'normal',
-            src: ['./src/assets/fonts/open-sans-600.woff2'],
-          },
-          {
-            weight: 700,
-            style: 'normal',
-            src: ['./src/assets/fonts/open-sans-700.woff2'],
+            src: ['./src/assets/fonts/roboto-300.woff2'],
           },
         ],
       },

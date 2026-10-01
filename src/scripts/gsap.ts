@@ -11,9 +11,9 @@ export const MOTION = '(prefers-reduced-motion: no-preference)'
 
 export const REDUCE = '(prefers-reduced-motion: reduce)'
 
-export const DESKTOP = '(width >= 1024px)'
+export const DESKTOP = '(width >= 1179px)'
 
-export const BELOW_DESKTOP = '(width < 1024px)'
+export const BELOW_DESKTOP = '(width < 1179px)'
 
 export const HOVER = '(hover: hover) and (pointer: fine)'
 

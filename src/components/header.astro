@@ -1,4 +1,14 @@
 ---
+import type { NavKey } from '@/data/navigation'
+
+interface Props {
+  theme: 'dark' | 'light'
+  current?: NavKey
+  cartCount?: number
+}
+
+const { theme } = Astro.props
+
 const LINKS = [
   { href: '#sample', label: 'Раздел' },
   { href: '#request', label: 'Заявка' },
@@ -6,7 +16,7 @@ const LINKS = [
 ]
 ---
 
-<header class="header">
+<header class="header" data-theme={theme}>
   <div class="container row">
     <a class="logo" href="/">Лендинг</a>
 

@@ -1,16 +1,26 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import Promo from '@/components/promo.astro'
-import Request from '@/components/request.astro'
-import Sample from '@/components/sample.astro'
+import Bikes from '@/components/bikes.astro'
+import Workshop from '@/components/workshop.astro'
+import Parts from '@/components/parts.astro'
+import Club from '@/components/club.astro'
 
-const title = 'Заголовок страницы — Название продукта'
+const title = 'Chopper Bikeshop — велосипеды с твоим характером'
 const description =
-  'Описание страницы для поиска и соцсетей: одно-два предложения о продукте.'
+  'Прогулочные велосипеды, запчасти и аксессуары для чопперов: бесплатный выездной тест-драйв, рассрочка 0-0-5, мастерская и клуб.'
 ---
 
-<Layout {title} {description}>
+<Layout {title} {description} theme="dark">
+  <h1 class="visually-hidden">
+    Главная страница магазина велосипедов Chopper Bike
+  </h1>
   <Promo />
-  <Sample />
-  <Request />
+  <section class="goods" aria-labelledby="goods-title">
+    <h2 class="visually-hidden" id="goods-title">Товары магазина</h2>
+    <Bikes />
+    <Workshop />
+    <Parts />
+  </section>
+  <Club />
 </Layout>

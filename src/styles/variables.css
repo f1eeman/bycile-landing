@@ -1,41 +1,67 @@
 :root {
-  --color-bg: #fff;
-  --color-surface-card: #fff;
-  --color-surface-inverse: #202020;
-  --color-surface-chip: #f4f4f4;
-  --color-surface-glass: rgb(255 255 255 / 5%);
-  --color-border-chip: #e8e8e8;
-  --color-border-glass: rgb(255 255 255 / 10%);
-  --color-divider: #d7d7d7;
-  --color-accent: #2c2c2c;
-  --color-success: #219653;
-  --color-text: #2c2c2c;
-  --color-text-muted: #666;
-  --color-text-on-accent: #fff;
-  --color-text-inverse: #efefef;
-  --color-text-inverse-muted: #8b8888;
-  --color-field-bg: #fff;
-  --color-field-border: #dbdbdb;
-  --color-field-placeholder: #b2b6bf;
+  --color-bg: #e9e1d6;
+  --color-text: #817255;
+  --color-text-muted: #9b8869;
+  --color-text-inverse: #e9e1d6;
+  --color-accent: #bb4f4f;
+  --color-accent-inverse: #baa480;
+  --color-surface-inverse: #27241d;
+  --color-frame: #f0ede8;
+  --color-rule: rgb(155 136 105 / 50%);
+  --color-rule-inverse: rgb(186 164 128 / 50%);
+  --color-on-fill: #f2f5f7;
+  --shadow-raised: 0 4px 10px rgb(0 0 0 / 18%);
+  --shadow-card: 0 4px 12px rgb(0 0 0 / 7%);
+  --shadow-accent: 0 4px 8px rgb(0 0 0 / 12%);
   --radius-field: 4px;
   --radius-control: 8px;
   --radius-tab: 24px;
-  --radius-block: 32px;
-  --radius-pill: 40px;
-  --shadow-card: 0 4px 12px rgb(0 0 0 / 7%);
-  --shadow-card-soft: 0 4px 24px rgb(0 0 0 / 7%);
-  --shadow-accent: 0 4px 8px rgb(0 0 0 / 12%);
-  --control-height: 48px;
   --header-height: 72px;
-  --layout-width: 1296px;
-  --layout-gutter: clamp(16px, 5vw, 72px);
-  --block-gap: 40px;
-  --region-gap: 56px;
+  --font-head: var(--font-roboto-serif);
+  --font-body: var(--font-roboto);
+  --text-display-size: 49.6px;
+  --text-display-sub-size: 30.4px;
+  --text-display-leading: 50px;
+  --text-display-tracking: 0.059em;
+  --text-display-sub-tracking: 0.065em;
+  --text-heading-size: 47.4px;
+  --text-heading-leading: 56px;
+  --text-heading-tracking: 0.025em;
+  --text-title-size: 23.8px;
+  --text-title-leading: 30px;
+  --text-title-tracking: 0.027em;
+  --text-price-size: 23.8px;
+  --text-price-xl-size: 47.4px;
+  --text-price-tracking: 0.037em;
+  --text-price-old-size: 13.8px;
+  --text-price-old-tracking: 0.048em;
+  --text-button-size: 23.8px;
+  --text-button-tracking: 0.02em;
+  --text-button-sm-size: 21.3px;
+  --text-button-sm-tracking: 0.08em;
+  --text-nav-size: 17.8px;
+  --text-nav-leading: 18px;
+  --text-nav-tracking: 0.061em;
+  --text-badge-size: 13.8px;
+  --text-badge-tracking: 0.042em;
+  --text-body-l-size: 22px;
+  --text-body-l-leading: 30px;
+  --text-body-s-size: 14px;
+  --text-body-s-leading: 18px;
+  --text-body-tracking: 0.2px;
+  --control-height: 60px;
+  --rule-width: 2px;
+  --frame-width: 6px;
+  --layout-width: 1271px;
+  --layout-gutter: clamp(16px, 5vw, 47.5px);
+  --content-width: 1122px;
+  --footer-width: 1120px;
 }
 
-@media (width >= 1024px) {
+@media (width >= 575px) {
   :root {
-    --region-gap: 120px;
-    --header-height: 88px;
+    --text-display-size: 89.1px;
+    --text-display-sub-size: 54.4px;
+    --text-display-leading: 90px;
   }
 }
