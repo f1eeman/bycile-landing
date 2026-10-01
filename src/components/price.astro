@@ -1,0 +1,99 @@
+---
+interface Props {
+  price: string
+  oldPrice?: string | undefined
+  discount?: string | undefined
+  size: 'sm' | 'xl'
+  class?: string
+}
+
+const {
+  price,
+  oldPrice,
+  discount,
+  size,
+  class: className,
+  ...attrs
+} = Astro.props
+---
+
+<p class:list={['price', `size-${size}`, className]} {...attrs}>
+  <span class="current">{price}</span>
+  {
+    oldPrice !== undefined && (
+      <span class="old">
+        <s>
+          <span class="visually-hidden">Цена без скидки: </span>
+          {oldPrice}
+        </s>
+        {discount !== undefined && <span class="discount">{discount}</span>}
+      </span>
+    )
+  }
+</p>
+
+<style>
+  .price {
+    font-family: var(--font-head);
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .current {
+    display: block;
+    color: var(--color-accent);
+    letter-spacing: var(--text-price-tracking);
+  }
+
+  .size-sm .current {
+    font-size: var(--text-price-size);
+    line-height: var(--text-price-leading);
+  }
+
+  .size-xl .current {
+    font-size: var(--text-price-xl-size);
+    line-height: var(--text-price-xl-leading);
+  }
+
+  .old {
+    display: block;
+    margin-block-start: 2px;
+    font-size: var(--text-price-old-size);
+    line-height: 16px;
+  }
+
+  s,
+  .discount {
+    display: inline-block;
+    block-size: 16px;
+    padding-block-start: 2px;
+    vertical-align: top;
+  }
+
+  s {
+    position: relative;
+    color: #bdb2a0;
+    letter-spacing: var(--text-price-old-tracking);
+    text-decoration: none;
+  }
+
+  s::after {
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 7px;
+    block-size: 1px;
+    background-color: currentcolor;
+    content: '';
+  }
+
+  .discount {
+    inline-size: 38px;
+    margin-inline-start: 10px;
+    background-color: var(--color-text-muted);
+    color: var(--color-on-fill);
+    font-size: var(--text-badge-size);
+    line-height: 16px;
+    letter-spacing: var(--text-badge-tracking);
+    text-align: center;
+  }
+</style>

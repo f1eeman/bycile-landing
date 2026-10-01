@@ -1,0 +1,67 @@
+---
+import Cart from '@/img/icons/cart.svg'
+
+interface Props {
+  product: string
+  class?: string
+}
+
+const { product, class: className, ...attrs } = Astro.props
+---
+
+<button type="button" class:list={['cart-button', className]} {...attrs}>
+  <Cart aria-hidden="true" />
+  <span class="visually-hidden">В корзину {product}</span>
+</button>
+
+<style>
+  .cart-button {
+    inline-size: 50px;
+    block-size: 50px;
+    padding: 16px 9px 15px 10px;
+    background-color: var(--color-accent);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    transition:
+      background-color 180ms cubic-bezier(0.2, 0.8, 0.25, 1),
+      transform 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .cart-button:hover {
+      transform: translateY(-2px);
+      background-color: color-mix(in srgb, var(--color-accent) 88%, #fff);
+    }
+  }
+
+  .cart-button:focus-visible {
+    transform: translateY(-2px);
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .cart-button:active {
+    transform: translateY(0) scale(0.97);
+    background-color: color-mix(in srgb, var(--color-accent) 85%, #000);
+    transition-duration: 90ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cart-button {
+      transition: background-color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+    }
+
+    .cart-button:focus-visible,
+    .cart-button:active {
+      transform: none;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .cart-button:hover {
+        transform: none;
+      }
+    }
+  }
+</style>

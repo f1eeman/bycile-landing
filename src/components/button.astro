@@ -2,21 +2,29 @@
 import type { HTMLTag, Polymorphic } from 'astro/types'
 
 type Props<Tag extends HTMLTag = 'button'> = Polymorphic<{ as: Tag }> & {
-  variant?: 'accent' | 'glass'
+  variant?: 'outline' | 'accent'
+  tone?: 'dark' | 'light'
   size?: 'md' | 'lg'
 }
 
 const {
   as: Tag = 'button',
   class: className,
-  variant = 'accent',
+  variant = 'outline',
+  tone = 'light',
   size = 'md',
   ...attrs
 } = Astro.props
 ---
 
 <Tag
-  class:list={['base-button', `variant-${variant}`, `size-${size}`, className]}
+  class:list={[
+    'base-button',
+    `variant-${variant}`,
+    variant === 'outline' && `tone-${tone}`,
+    `size-${size}`,
+    className,
+  ]}
   {...attrs}
 >
   <slot />
@@ -24,47 +32,63 @@ const {
 
 <style>
   .base-button {
+    --cap-shift: 6px;
+
     position: relative;
     display: inline-flex;
     gap: 10px;
     align-items: center;
     justify-content: center;
-    min-block-size: var(--control-height);
-    padding: 12px 32px;
-    border-radius: var(--radius-control);
-    font: inherit;
-    font-weight: 600;
-    line-height: 24px;
+    block-size: var(--control-height);
+    padding-block-start: var(--cap-shift);
+    font-family: var(--font-head);
+    font-weight: 400;
+    font-size: var(--text-button-size);
+    line-height: 1;
+    letter-spacing: var(--text-button-tracking);
     text-align: center;
+    text-transform: uppercase;
+    white-space: nowrap;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
     user-select: none;
     transition:
-      background-color 180ms ease,
-      transform 180ms cubic-bezier(0.2, 0.8, 0.25, 1),
-      box-shadow 180ms ease;
+      background-color 180ms cubic-bezier(0.2, 0.8, 0.25, 1),
+      transform 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  :where(.size-md) {
+    inline-size: 240px;
+  }
+
+  :where(.size-lg) {
+    inline-size: 273px;
+  }
+
+  .variant-outline {
+    border: 1px solid var(--outline-border);
+    background-color: transparent;
+    color: var(--outline-text);
+  }
+
+  .tone-dark {
+    --outline-border: var(--color-accent-inverse);
+    --outline-text: var(--color-accent-inverse);
+  }
+
+  .tone-light {
+    --outline-border: var(--color-text-muted);
+    --outline-text: var(--color-text);
   }
 
   .variant-accent {
     background-color: var(--color-accent);
-    color: var(--color-text-on-accent);
-    box-shadow: var(--shadow-accent);
-  }
-
-  .variant-glass {
-    padding: 11px 31px;
-    border: 1px solid var(--color-border-glass);
-    background-color: var(--color-surface-glass);
     color: var(--color-text-inverse);
   }
 
-  .size-lg {
-    padding-block: 16px;
-  }
-
-  .variant-glass.size-lg {
-    padding: 15px;
+  .base-button > :global(svg) {
+    margin-block-end: var(--cap-shift);
   }
 
   @media (hover: hover) and (pointer: fine) {
@@ -72,16 +96,16 @@ const {
       transform: translateY(-2px);
     }
 
-    .variant-accent:hover {
-      background-color: color-mix(in srgb, var(--color-accent) 88%, #fff);
-    }
-
-    .variant-glass:hover {
+    .variant-outline:hover {
       background-color: color-mix(
         in srgb,
-        var(--color-text-inverse) 12%,
+        var(--outline-border) 12%,
         transparent
       );
+    }
+
+    .variant-accent:hover {
+      background-color: color-mix(in srgb, var(--color-accent) 88%, #fff);
     }
   }
 
@@ -91,8 +115,8 @@ const {
     outline-offset: 3px;
   }
 
-  .variant-glass:focus-visible {
-    outline-color: var(--color-text-inverse);
+  .tone-dark:focus-visible {
+    outline-color: var(--color-accent-inverse);
   }
 
   .base-button:active {
@@ -100,21 +124,17 @@ const {
     transition-duration: 90ms;
   }
 
+  .variant-outline:active {
+    background-color: color-mix(in srgb, var(--outline-border) 6%, transparent);
+  }
+
   .variant-accent:active {
     background-color: color-mix(in srgb, var(--color-accent) 85%, #000);
   }
 
-  .variant-glass:active {
-    background-color: color-mix(
-      in srgb,
-      var(--color-text-inverse) 6%,
-      transparent
-    );
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .base-button {
-      transition: background-color 180ms ease;
+      transition: background-color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
     }
 
     .base-button:focus-visible,

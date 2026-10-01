@@ -1,0 +1,177 @@
+---
+import { Image } from 'astro:assets'
+import CartButton from '@/components/cart-button.astro'
+import Price from '@/components/price.astro'
+import type { Product } from '@/data/products'
+
+interface Props {
+  product: Product
+  kind: 'bike' | 'part'
+  heading: 'h2' | 'h3' | 'h4'
+  href?: string
+}
+
+const { product, kind, heading: Heading, href = '/product/' } = Astro.props
+const { name, nameBreak } = product
+const nameLines =
+  nameBreak === undefined
+    ? [name]
+    : [name.slice(0, nameBreak), name.slice(nameBreak).trimStart()]
+const [specStart, specEnd] = product.specs
+---
+
+<article class:list={['card', `kind-${kind}`]}>
+  <div class="layout">
+    <div class="text">
+      <Heading class="title">
+        <a class="link" href={href}
+          >{nameLines.map((line) => <span class="line">{line} </span>)}</a
+        >
+      </Heading>
+      <p class="specs">
+        <span class="line">{specStart}</span>
+        <span class="line">{specEnd}</span>
+      </p>
+      <Price
+        class="cost"
+        size="sm"
+        price={product.price}
+        oldPrice={product.oldPrice}
+        discount={product.discount}
+      />
+    </div>
+    <div class="frame">
+      <Image
+        class="photo"
+        src={product.image}
+        alt=""
+        widths={[224]}
+        sizes="224px"
+      />
+      {product.isNew === true && <span class="new">New</span>}
+      <CartButton class="cart" product={name} />
+    </div>
+  </div>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    container-type: inline-size;
+    text-align: center;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-areas:
+      'media'
+      'text';
+  }
+
+  .frame {
+    position: relative;
+    grid-area: media;
+    justify-self: center;
+    inline-size: 178px;
+    block-size: 240px;
+    border: var(--frame-width) solid var(--color-frame);
+  }
+
+  .photo {
+    position: absolute;
+    inset-block-start: 29px;
+    inset-inline-start: -29px;
+    max-inline-size: none;
+  }
+
+  .new {
+    position: absolute;
+    inset-block-start: 9px;
+    inset-inline-start: -21px;
+    inline-size: 56px;
+    block-size: 24px;
+    padding-block-start: 2px;
+    background-color: var(--color-text-muted);
+    color: var(--color-on-fill);
+    font-family: var(--font-head);
+    font-size: var(--text-badge-size);
+    line-height: 24px;
+    letter-spacing: var(--text-badge-tracking);
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .cart {
+    position: absolute;
+    z-index: 2;
+    inset-block-end: -31px;
+    inset-inline-start: 58px;
+  }
+
+  .kind-bike .cart {
+    box-shadow: var(--shadow-raised);
+  }
+
+  .text {
+    grid-area: text;
+    padding-block-start: 45px;
+  }
+
+  .title {
+    font-family: var(--font-head);
+    font-weight: 400;
+    font-size: var(--text-title-size);
+    line-height: var(--text-title-leading);
+    letter-spacing: var(--text-title-tracking);
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+
+  .line {
+    display: block;
+  }
+
+  .link::after {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    content: '';
+  }
+
+  .link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .specs {
+    font-size: var(--text-body-s-size);
+    line-height: var(--text-body-s-leading);
+    color: var(--color-text-muted);
+  }
+
+  .kind-bike .cost {
+    margin-block-start: 12px;
+  }
+
+  .kind-part .cost {
+    margin-block-start: 8px;
+  }
+
+  @container (inline-size >= 506.67px) {
+    .layout {
+      grid-template-columns: 224px 1fr;
+      grid-template-areas: 'media text';
+      column-gap: 58.67px;
+      align-items: center;
+      text-align: start;
+    }
+
+    .frame {
+      margin-block-end: 25px;
+    }
+
+    .text {
+      padding-block-start: 0;
+    }
+  }
+</style>

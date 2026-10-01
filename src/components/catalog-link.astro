@@ -1,0 +1,31 @@
+---
+import Button from '@/components/button.astro'
+
+interface Props {
+  label: string
+}
+
+const { label } = Astro.props
+---
+
+<div class="catalog-link">
+  <Button as="a" href="/catalog/" variant="outline" tone="light" size="lg">
+    {label}
+  </Button>
+</div>
+
+<style>
+  .catalog-link {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .catalog-link::before,
+  .catalog-link::after {
+    flex: 1;
+    block-size: var(--rule-width);
+    background-color: var(--color-rule);
+    content: '';
+  }
+</style>
