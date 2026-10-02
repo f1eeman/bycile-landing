@@ -3,7 +3,7 @@ const GROUPS = [3, 3, 2, 2]
 const MAX = 10
 const WHOLE = 10
 
-export const LEAD = '7'
+export const LEAD = '9'
 
 export const digitsOf = (text: string): string => text.replace(/\D/gu, '')
 

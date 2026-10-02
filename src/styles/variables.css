@@ -5,6 +5,11 @@
   --color-text-inverse: #e9e1d6;
   --color-accent: #bb4f4f;
   --color-accent-inverse: #baa480;
+  --color-error-inverse: color-mix(
+    in srgb,
+    var(--color-accent) 60%,
+    var(--color-text-inverse)
+  );
   --color-surface-inverse: #27241d;
   --color-frame: #f0ede8;
   --color-rule: rgb(155 136 105 / 50%);
@@ -13,7 +18,6 @@
   --shadow-raised: 0 4px 10px rgb(0 0 0 / 18%);
   --shadow-card: 0 4px 12px rgb(0 0 0 / 7%);
   --shadow-accent: 0 4px 8px rgb(0 0 0 / 12%);
-  --radius-field: 4px;
   --radius-control: 8px;
   --radius-tab: 24px;
   --header-height: 72px;

@@ -1,1 +1,483 @@
-<section class="section" id="club"></section>
+---
+import { Image } from 'astro:assets'
+import Button from '@/components/button.astro'
+import Input from '@/components/input.astro'
+import rider from '@/img/club/rider.jpg'
+
+const EXPERIENCE = [
+  { value: '1', label: 'до 1 года', checked: false },
+  { value: '5', label: 'до 5 лет', checked: true },
+  { value: '5+', label: 'более 5 лет', checked: false },
+]
+---
+
+<section class="club" id="club" aria-labelledby="club-title">
+  <div class="container">
+    <div class="content-column layout">
+      <h2 class="title" id="club-title" data-reveal="up">
+        Вступай в&nbsp;клуб и&nbsp;получай специальные привилегии
+      </h2>
+
+      <div class="card" data-reveal="up" data-bid-card>
+        <div class="pane request">
+          <p class="lead">
+            Введите ваши данные и&nbsp;наш менеджер свяжется с&nbsp;вами
+            в&nbsp;ближайшее время
+          </p>
+
+          <form
+            class="form"
+            aria-labelledby="club-form-title"
+            data-bid-form
+            novalidate
+          >
+            <h3 class="visually-hidden" id="club-form-title">
+              Форма вступления в&nbsp;клуб
+            </h3>
+
+            <div class="fields">
+              <div class="field">
+                <label class="visually-hidden" for="bid-name">
+                  Введите ваше имя
+                </label>
+                <Input
+                  id="bid-name"
+                  type="text"
+                  name="name"
+                  autocomplete="name"
+                  placeholder="Имя"
+                  aria-describedby="bid-name-error"
+                  required
+                  data-bid-name
+                />
+                <p class="error" id="bid-name-error"><span></span></p>
+              </div>
+
+              <div class="field">
+                <label class="visually-hidden" for="bid-phone">
+                  Введите ваш телефон
+                </label>
+                <Input
+                  id="bid-phone"
+                  type="tel"
+                  name="phone"
+                  inputmode="tel"
+                  autocomplete="tel"
+                  placeholder="Телефон"
+                  aria-describedby="bid-phone-error"
+                  required
+                  data-bid-phone
+                />
+                <p class="error" id="bid-phone-error"><span></span></p>
+              </div>
+
+              <div class="field email">
+                <label class="visually-hidden" for="bid-email">
+                  Введите ваш e-mail
+                </label>
+                <Input
+                  id="bid-email"
+                  type="email"
+                  name="email"
+                  inputmode="email"
+                  autocomplete="email"
+                  placeholder="E-mail"
+                  aria-describedby="bid-email-error"
+                  required
+                  data-bid-email
+                />
+                <p class="error" id="bid-email-error"><span></span></p>
+              </div>
+            </div>
+
+            <fieldset class="experience">
+              <legend class="legend">Выберите ваш стаж вождения:</legend>
+              <div class="options">
+                {
+                  EXPERIENCE.map((option) => (
+                    <label class="option">
+                      <input
+                        class="control"
+                        type="radio"
+                        name="experience"
+                        value={option.value}
+                        checked={option.checked}
+                      />
+                      <span class="radio" aria-hidden="true" />
+                      {option.label}
+                    </label>
+                  ))
+                }
+              </div>
+            </fieldset>
+
+            <div class="agreement">
+              <label class="consent">
+                <input
+                  class="control"
+                  type="checkbox"
+                  name="consent"
+                  aria-describedby="bid-consent-error"
+                  required
+                  data-bid-consent
+                />
+                <span class="box" aria-hidden="true"></span>
+                Я&nbsp;даю согласие на&nbsp;обработку моих персональных данных
+              </label>
+              <p class="error" id="bid-consent-error"><span></span></p>
+            </div>
+
+            <Button class="submit" type="submit" tone="dark">
+              Подать заявку
+            </Button>
+          </form>
+        </div>
+
+        <div class="pane done">
+          <h3 class="done-title" tabindex="-1" data-bid-title>
+            Заявка отправлена
+          </h3>
+          <p class="lead">
+            Наш менеджер свяжется с&nbsp;вами в&nbsp;ближайшее время
+          </p>
+          <Button class="submit" type="button" tone="dark" data-bid-reset>
+            Закрыть
+          </Button>
+        </div>
+      </div>
+
+      <Image
+        class="photo"
+        src={rider}
+        alt=""
+        widths={[343, 471, 509]}
+        sizes="(width >= 1217px) 509px, (width >= 1179px) calc(100vw - 708px), (width >= 566px) 509px, 90vw"
+        data-reveal="up"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .club {
+    --club-error: var(--color-error-inverse);
+
+    padding-block: 121px 118px;
+    background-color: var(--color-surface-inverse);
+    color: var(--color-text-inverse);
+  }
+
+  .layout {
+    display: grid;
+  }
+
+  .title,
+  .done-title {
+    font-family: var(--font-head);
+    font-weight: 400;
+    text-transform: uppercase;
+    color: var(--color-accent-inverse);
+  }
+
+  .title {
+    max-inline-size: 613px;
+    font-size: var(--text-heading-size);
+    line-height: var(--text-heading-leading);
+    letter-spacing: var(--text-heading-tracking);
+  }
+
+  .done-title {
+    margin-block-start: 16.5px;
+    font-size: var(--text-title-size);
+    line-height: var(--text-title-leading);
+    letter-spacing: var(--text-title-tracking);
+  }
+
+  .card {
+    display: grid;
+    max-inline-size: 538px;
+  }
+
+  .pane {
+    grid-area: 1 / 1;
+    transition:
+      opacity 180ms cubic-bezier(0.2, 0.8, 0.25, 1),
+      display 180ms allow-discrete;
+  }
+
+  .done {
+    display: none;
+    opacity: 0;
+  }
+
+  .card[data-bid-state='done'] .request {
+    display: none;
+    opacity: 0;
+  }
+
+  .card[data-bid-state='done'] .done {
+    display: flex;
+    opacity: 1;
+  }
+
+  @starting-style {
+    .card[data-bid-state='done'] .done {
+      opacity: 0;
+    }
+
+    .card:not([data-bid-state='done']) .request {
+      opacity: 0;
+    }
+  }
+
+  .done-title:focus-visible {
+    outline: 2px solid var(--color-accent-inverse);
+    outline-offset: 3px;
+  }
+
+  .form,
+  .done {
+    flex-direction: column;
+  }
+
+  .form {
+    display: flex;
+  }
+
+  .lead {
+    max-inline-size: 460px;
+    margin-block-start: 16.5px;
+  }
+
+  .fields {
+    display: grid;
+    row-gap: 30px;
+    align-items: start;
+    margin-block-start: 49.5px;
+  }
+
+  .field {
+    min-inline-size: 0;
+  }
+
+  .experience {
+    min-inline-size: 0;
+    margin: 32.5px 0 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .legend {
+    padding: 0;
+  }
+
+  .options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 50px;
+    margin-block-start: 27.5px;
+  }
+
+  .option,
+  .consent {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+  }
+
+  .option::before,
+  .consent::before {
+    position: absolute;
+    inset-block: min(0px, (100% - 44px) / 2);
+    inset-inline: 0;
+    content: '';
+  }
+
+  .option {
+    align-items: center;
+  }
+
+  .consent {
+    align-items: start;
+    font-size: var(--text-body-s-size);
+    line-height: var(--text-body-s-leading);
+  }
+
+  .control {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .radio,
+  .box {
+    position: relative;
+    flex: none;
+    border: 1px solid var(--color-accent-inverse);
+    transition:
+      border-color 180ms cubic-bezier(0.2, 0.8, 0.25, 1),
+      background-color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .option .control,
+  .radio {
+    inline-size: 30px;
+    block-size: 30px;
+    border-radius: 50%;
+  }
+
+  .radio::after {
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background-color: var(--color-accent-inverse);
+    opacity: 0;
+    content: '';
+  }
+
+  .consent .control,
+  .box {
+    inline-size: 18px;
+    block-size: 18px;
+  }
+
+  .box::after {
+    position: absolute;
+    inset-block-start: 3.8px;
+    inset-inline-start: 3px;
+    inline-size: 4px;
+    block-size: 6.9px;
+    border-block-end: 1px solid var(--color-accent-inverse);
+    border-inline-end: 1px solid var(--color-accent-inverse);
+    opacity: 0;
+    transform: rotate(45deg);
+    transform-origin: 100% 100%;
+    content: '';
+  }
+
+  :checked + .radio::after,
+  :checked + .box::after {
+    opacity: 1;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .option:hover .radio,
+    .consent:hover .box {
+      border-color: var(--color-text-inverse);
+    }
+  }
+
+  .option:active .radio,
+  .consent:active .box {
+    background-color: color-mix(
+      in srgb,
+      var(--color-accent-inverse) 12%,
+      transparent
+    );
+    transition-duration: 90ms;
+  }
+
+  :focus-visible + .radio,
+  :focus-visible + .box {
+    outline: 2px solid var(--color-accent-inverse);
+    outline-offset: 3px;
+  }
+
+  .consent [aria-invalid='true'] + .box {
+    border-color: var(--club-error);
+  }
+
+  .agreement {
+    margin-block-start: 40px;
+  }
+
+  .error {
+    block-size: 0;
+    overflow: clip;
+    color: var(--club-error);
+    font-size: var(--text-body-s-size);
+    line-height: var(--text-body-s-leading);
+    transition: block-size 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .error span {
+    display: block;
+    padding-block-start: 6px;
+    transform: translateY(-100%);
+    transition: transform 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .error[data-shown] {
+    block-size: auto;
+  }
+
+  .error[data-shown] span {
+    transform: translateY(0);
+  }
+
+  .submit {
+    margin-block-start: 30px;
+  }
+
+  .done .submit {
+    margin-block-start: 49.5px;
+  }
+
+  .photo {
+    inline-size: 100%;
+    max-inline-size: 509px;
+    block-size: auto;
+    margin-block-start: 75px;
+    box-shadow: 0 0 55px rgb(0 0 0 / 22%);
+  }
+
+  @media (width >= 1179px) {
+    .layout {
+      grid-template-rows: auto 1fr;
+      grid-template-columns: 538px minmax(0, 509px);
+      column-gap: 75px;
+    }
+
+    .title {
+      grid-area: 1 / 1 / 2 / -1;
+    }
+
+    .card {
+      grid-area: 2 / 1;
+    }
+
+    .fields {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 28px;
+    }
+
+    .email {
+      grid-column: 1 / -1;
+    }
+
+    .photo {
+      grid-area: 1 / 2 / 3;
+      block-size: 649px;
+      margin-block-start: 7px;
+      object-fit: cover;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pane,
+    .radio,
+    .box,
+    .error,
+    .error span {
+      transition: none;
+    }
+  }
+</style>

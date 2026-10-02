@@ -1,11 +1,7 @@
-import {
-  attachPhoneMask,
-  insertedText,
-  LEAD,
-  type PhoneMask,
-} from '@/scripts/phone-mask'
+import { attachPhoneMask, insertedText, LEAD } from '@/scripts/phone-mask'
 
 const ALLOWED = /[^A-Za-zА-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүҺһІі '-]/gu
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/u
 const NAME_MIN = 2
 const PHONE_LENGTH = 10
 
@@ -16,6 +12,14 @@ interface Field {
   input: HTMLInputElement
   box: HTMLElement
   text: HTMLElement
+}
+
+interface Bid {
+  name: string
+  phone: string
+  email: string
+  experience: string
+  consent: true
 }
 
 const sanitizeName = (text: string): string => text.replace(ALLOWED, '')
@@ -36,6 +40,18 @@ const phoneError = (digits: string): string => {
 
   return ''
 }
+
+const emailError = (value: string): string => {
+  const trimmed = value.trim()
+
+  if (trimmed.length === 0) return 'Укажите e-mail'
+  if (!EMAIL.test(trimmed)) return 'Проверьте адрес e-mail'
+
+  return ''
+}
+
+const consentError = (checked: boolean): string =>
+  checked ? '' : 'Нужно согласие на обработку данных'
 
 const fieldOf = (form: HTMLFormElement, hook: string): Field | null => {
   const input = form.querySelector<HTMLInputElement>(`[data-bid-${hook}]`)
@@ -69,8 +85,8 @@ const mark = (field: Field, message: string): void => {
   field.input.setAttribute('aria-invalid', 'true')
 }
 
-const forgetOnInput = (field: Field): void => {
-  field.input.addEventListener('input', () => {
+const forgetOn = (field: Field | null, type: 'input' | 'change'): void => {
+  field?.input.addEventListener(type, () => {
     if (field.input.hasAttribute('aria-invalid')) mark(field, '')
   })
 }
@@ -109,11 +125,14 @@ const filterName = (input: HTMLInputElement): void => {
   })
 }
 
-const send = (name: Field, mask: PhoneMask): void => {
-  console.log({
-    name: name.input.value.trim(),
-    phone: `+7${mask.digits()}`,
-  })
+const experienceOf = (form: HTMLFormElement): string => {
+  const value = new FormData(form).get('experience')
+
+  return typeof value === 'string' ? value : ''
+}
+
+const send = (bid: Bid): void => {
+  console.log(bid)
 }
 
 const wireDone = (card: HTMLElement, restore: () => void): (() => void) => {
@@ -137,12 +156,19 @@ const setup = (form: HTMLFormElement): void => {
 
   if (name === null || phone === null) return
 
+  const email = fieldOf(form, 'email')
+  const consent = fieldOf(form, 'consent')
+  const fields = [name, phone, email, consent].filter(
+    (field): field is Field => field !== null,
+  )
   const mask = attachPhoneMask(phone.input)
   const card = form.closest<HTMLElement>('[data-bid-card]')
 
   filterName(name.input)
-  forgetOnInput(name)
-  forgetOnInput(phone)
+  forgetOn(name, 'input')
+  forgetOn(phone, 'input')
+  forgetOn(email, 'input')
+  forgetOn(consent, 'change')
 
   const done =
     card === null
@@ -150,8 +176,9 @@ const setup = (form: HTMLFormElement): void => {
       : wireDone(card, () => {
           form.reset()
           mask.clear()
-          mark(name, '')
-          mark(phone, '')
+
+          for (const field of fields) mark(field, '')
+
           name.input.focus()
         })
 
@@ -161,6 +188,12 @@ const setup = (form: HTMLFormElement): void => {
     const messages = [
       { field: name, message: nameError(name.input.value) },
       { field: phone, message: phoneError(mask.digits()) },
+      ...(email === null
+        ? []
+        : [{ field: email, message: emailError(email.input.value) }]),
+      ...(consent === null
+        ? []
+        : [{ field: consent, message: consentError(consent.input.checked) }]),
     ]
 
     for (const { field, message } of messages) mark(field, message)
@@ -173,7 +206,13 @@ const setup = (form: HTMLFormElement): void => {
       return
     }
 
-    send(name, mask)
+    send({
+      name: name.input.value.trim(),
+      phone: `+7${mask.digits()}`,
+      email: email?.input.value.trim() ?? '',
+      experience: experienceOf(form),
+      consent: true,
+    })
     done?.()
   })
 }
