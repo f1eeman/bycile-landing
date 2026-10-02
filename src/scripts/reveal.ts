@@ -24,6 +24,8 @@ export const DEFAULT_STAGGER = 0.12
 
 type Mode = 'block' | 'each' | 'stagger'
 
+type Cleanup = () => void
+
 interface Scope {
   query: string
   mode: Mode
@@ -84,13 +86,25 @@ const byQuery = (
   return scopes
 }
 
-const reveal = (block: HTMLElement, mode: Mode): void => {
+const playOnFocus = (target: Element, tween: gsap.core.Tween): Cleanup => {
+  const play = (): void => {
+    tween.play()
+  }
+
+  target.addEventListener('focusin', play, { once: true })
+
+  return () => {
+    target.removeEventListener('focusin', play)
+  }
+}
+
+const reveal = (block: HTMLElement, mode: Mode): Cleanup[] => {
   const direction = block.dataset['reveal']
   const from = offsetsOf(BASE.shift)[isDirection(direction) ? direction : 'up']
   const own = block.dataset['revealStart']
   const motion = {
     ...from,
-    autoAlpha: 0,
+    opacity: 0,
     duration: BASE.duration,
     ease: BASE.ease,
   }
@@ -98,34 +112,43 @@ const reveal = (block: HTMLElement, mode: Mode): void => {
   if (mode === 'each') {
     const start = own ?? BASE.start
 
-    for (const child of Array.from(block.children)) {
-      gsap.from(child, {
-        ...motion,
-        scrollTrigger: { trigger: child, start, once: true },
-      })
-    }
-
-    return
+    return Array.from(block.children, (child) =>
+      playOnFocus(
+        child,
+        gsap.from(child, {
+          ...motion,
+          scrollTrigger: { trigger: child, start, once: true },
+        }),
+      ),
+    )
   }
 
   if (mode === 'stagger') {
-    gsap.from(Array.from(block.children), {
-      ...motion,
-      stagger: Number(block.dataset['revealStagger']) || DEFAULT_STAGGER,
-      scrollTrigger: {
-        trigger: block,
-        start: own ?? STILL_START,
-        once: true,
-      },
-    })
-
-    return
+    return [
+      playOnFocus(
+        block,
+        gsap.from(Array.from(block.children), {
+          ...motion,
+          stagger: Number(block.dataset['revealStagger']) || DEFAULT_STAGGER,
+          scrollTrigger: {
+            trigger: block,
+            start: own ?? STILL_START,
+            once: true,
+          },
+        }),
+      ),
+    ]
   }
 
-  gsap.from(block, {
-    ...motion,
-    scrollTrigger: { trigger: block, start: own ?? BASE.start, once: true },
-  })
+  return [
+    playOnFocus(
+      block,
+      gsap.from(block, {
+        ...motion,
+        scrollTrigger: { trigger: block, start: own ?? BASE.start, once: true },
+      }),
+    ),
+  ]
 }
 
 export function initReveal(): void {
@@ -135,7 +158,11 @@ export function initReveal(): void {
 
   for (const [query, scope] of byQuery(blocks)) {
     mm.add(query, () => {
-      for (const { block, mode } of scope) reveal(block, mode)
+      const cleanups = scope.flatMap(({ block, mode }) => reveal(block, mode))
+
+      return () => {
+        for (const cleanup of cleanups) cleanup()
+      }
     })
   }
 }

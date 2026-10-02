@@ -48,13 +48,13 @@ const props = Astro.props
   input:focus-visible {
     border-color: var(--color-text-inverse);
     outline: 3px solid
-      color-mix(in srgb, var(--color-accent-inverse) 35%, transparent);
+      color-mix(in srgb, var(--color-accent-inverse) 65%, transparent);
     outline-offset: 0;
   }
 
   input[aria-invalid='true']:focus-visible {
     border-color: var(--field-error);
-    outline-color: color-mix(in srgb, var(--field-error) 35%, transparent);
+    outline-color: color-mix(in srgb, var(--field-error) 65%, transparent);
   }
 
   input:active {

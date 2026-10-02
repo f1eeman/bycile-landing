@@ -304,6 +304,7 @@ const cartLabel =
     }
 
     @media (hover: hover) and (pointer: fine) {
+      .menu-toggle:hover .burger,
       .menu-toggle:hover .burger::before,
       .menu-toggle:hover .burger::after {
         background-color: var(--header-hover);
@@ -449,7 +450,7 @@ const cartLabel =
         color: var(--header-hover);
       }
 
-      .nav-link:hover::after {
+      .nav-link:not([aria-current]):hover::after {
         transform: scaleX(1);
         transform-origin: left;
       }
