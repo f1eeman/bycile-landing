@@ -1,48 +1,157 @@
-<section class="promo section" id="promo">
-  <div class="container inner">
-    <p class="title">Заголовок лендинга</p>
-    <p class="lead">
-      Подзаголовок в одну-две строки. Секция промо — первая на странице; ни
-      «герой», ни «первый экран».
-    </p>
+---
+import { Picture } from 'astro:assets'
+import Button from '@/components/button.astro'
+import Socials from '@/components/socials.astro'
+import bike from '@/img/promo/bike.jpg'
+---
+
+<section class="promo" id="promo" aria-labelledby="promo-title">
+  <Picture
+    class="backdrop"
+    src={bike}
+    formats={['avif', 'webp']}
+    widths={[1366]}
+    sizes="(width >= 1366px) 100vw, 1366px"
+    alt=""
+    loading="eager"
+    fetchpriority="high"
+  />
+  <div class="container">
+    <div class="row wide-row">
+      <h2 class="visually-hidden" id="promo-title">
+        Промо-слайд с&nbsp;переходом в&nbsp;магазин
+      </h2>
+      <div class="offer">
+        <p class="slogan">
+          <span class="line">Велосипеды </span><span class="line sub"
+            >с&nbsp;твоим характером</span
+          >
+        </p>
+        <Button as="a" href="/catalog/" class="shop" tone="dark">
+          В&nbsp;магазин
+        </Button>
+      </div>
+      <Socials class="promo-socials" />
+    </div>
   </div>
 </section>
 
 <style>
   .promo {
-    padding-block: 40px 56px;
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    min-block-size: 768px;
+    background-color: var(--color-surface-inverse);
   }
 
-  .inner {
+  .backdrop {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    object-position: 20% 50%;
+  }
+
+  .container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  .row {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding-block: 144px 33px;
+  }
+
+  .offer {
     display: flex;
     flex-direction: column;
     align-items: start;
-    gap: 24px;
+    align-self: start;
+    gap: 30px;
   }
 
-  .title {
-    font-weight: 700;
-    font-size: 32px;
-    line-height: 1.2;
+  .slogan {
+    font-family: var(--font-head);
+    font-weight: 400;
+    line-height: var(--text-display-leading);
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--color-accent-inverse);
   }
 
-  .lead {
-    max-inline-size: 60ch;
-    color: var(--color-text-muted);
+  .line {
+    display: block;
+    font-size: var(--text-display-size);
+    letter-spacing: var(--text-display-tracking);
   }
 
-  @media (width >= 1024px) {
+  .sub {
+    font-size: var(--text-display-sub-size);
+    letter-spacing: var(--text-display-sub-tracking);
+  }
+
+  .promo .shop {
+    font-size: var(--text-button-sm-size);
+    letter-spacing: var(--text-button-sm-tracking);
+  }
+
+  .row > :global(.promo-socials) {
+    align-self: end;
+    margin-block-start: auto;
+  }
+
+  @media (width >= 575px) {
     .promo {
-      padding-block: 72px 120px;
+      --text-display-size: 89.1px;
+      --text-display-sub-size: 54.4px;
+      --text-display-leading: 90px;
     }
 
-    .title {
-      font-size: 56px;
+    .offer {
+      align-self: end;
     }
 
-    .lead {
-      font-size: 20px;
-      line-height: 28px;
+    .promo .shop {
+      margin-inline-start: 144.5px;
+    }
+  }
+
+  @media (575px <= width < 1179px) {
+    .promo {
+      min-block-size: 1128px;
+      background-color: #111;
+    }
+
+    .backdrop {
+      inset-block-start: auto;
+      block-size: 768px;
+      object-position: 10% 50%;
+    }
+
+    .row > :global(.promo-socials) {
+      margin-block-start: 30px;
+    }
+  }
+
+  @media (width >= 1179px) {
+    .backdrop {
+      object-position: 50% 50%;
+    }
+
+    .row {
+      padding-block-start: 248px;
+    }
+
+    .offer {
+      align-self: start;
+      margin-inline-start: calc(50% + 30px);
     }
   }
 </style>

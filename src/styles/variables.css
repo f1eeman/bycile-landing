@@ -59,11 +59,3 @@
   --content-width: 1122px;
   --footer-width: 1120px;
 }
-
-@media (width >= 575px) {
-  :root {
-    --text-display-size: 89.1px;
-    --text-display-sub-size: 54.4px;
-    --text-display-leading: 90px;
-  }
-}

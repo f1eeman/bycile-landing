@@ -1,1 +1,109 @@
-<section class="section" id="workshop"></section>
+---
+import { Image } from 'astro:assets'
+import Button from '@/components/button.astro'
+import master from '@/img/workshop/master.jpg'
+
+const COPY = [
+  [
+    'Наши мастера всегда готовы привести',
+    'в\u00A0чувство вашего коня, кастомизировать',
+    'любую модель или просто помочь советом.',
+  ],
+  [
+    'Возможен выезд по вашему адресу.',
+    'Для велосипедов, купленных у\u00A0нас,',
+    'обслуживание предоставляется бесплатно.',
+  ],
+] as const
+---
+
+<section class="workshop" id="workshop" aria-labelledby="workshop-title">
+  <div class="container">
+    <div class="content-column">
+      <div class="layout" data-reveal>
+        <Image
+          class="photo"
+          src={master}
+          alt=""
+          widths={[462]}
+          sizes="(width >= 514px) 462px, 90vw"
+        />
+        <div class="text">
+          <h3 class="title" id="workshop-title">Мастерская</h3>
+          {
+            COPY.map((lines) => (
+              <p class="copy">
+                {lines.map((line) => (
+                  <span class="line">{line} </span>
+                ))}
+              </p>
+            ))
+          }
+          <Button as="a" href="#contacts" class="more" tone="dark">
+            Подробнее
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .workshop {
+    padding-block: 119px 95px;
+    background-color: #23211b;
+    color: var(--color-text-inverse);
+  }
+
+  .layout {
+    display: grid;
+    row-gap: 59px;
+  }
+
+  .photo {
+    inline-size: 100%;
+    max-inline-size: 462px;
+    block-size: auto;
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .title {
+    font-family: var(--font-head);
+    font-weight: 400;
+    font-size: var(--text-heading-size);
+    line-height: var(--text-heading-leading);
+    letter-spacing: var(--text-heading-tracking);
+    text-transform: uppercase;
+    color: var(--color-accent-inverse);
+  }
+
+  .copy {
+    margin-block-start: 10px;
+  }
+
+  .title + .copy {
+    margin-block-start: 11.5px;
+  }
+
+  .workshop .more {
+    margin-block-start: 44.5px;
+  }
+
+  @media (width >= 1179px) {
+    .layout {
+      grid-template-columns: 462px minmax(0, 507px);
+      column-gap: 59px;
+      justify-content: center;
+      align-items: end;
+    }
+
+    .line {
+      display: block;
+    }
+  }
+</style>
