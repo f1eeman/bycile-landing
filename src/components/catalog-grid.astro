@@ -1,1 +1,66 @@
-<div class="catalog-grid"></div>
+---
+import ProductCard from '@/components/product-card.astro'
+import { CATALOG_BIKES } from '@/data/products'
+
+interface Props {
+  class?: string
+}
+
+const { class: className, ...attrs } = Astro.props
+---
+
+<ul
+  class:list={['catalog-grid', className]}
+  id="catalog-grid"
+  data-view="grid"
+  {...attrs}
+>
+  {
+    CATALOG_BIKES.map((product) => (
+      <li class="cell">
+        <ProductCard product={product} kind="bike" heading="h2" />
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .catalog-grid {
+    display: grid;
+    row-gap: 32px;
+    justify-items: center;
+  }
+
+  .catalog-grid[data-view='grid'] > .cell {
+    inline-size: 224px;
+  }
+
+  .catalog-grid[data-view='list'] {
+    justify-items: stretch;
+  }
+
+  @media (575px <= width < 978px) {
+    .catalog-grid[data-view='grid'] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 58.67px;
+    }
+
+    .catalog-grid[data-view='grid'] > .cell:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (width >= 978px) {
+    .catalog-grid[data-view='grid'] {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 105.33px;
+    }
+  }
+
+  @media (width >= 1179px) {
+    .catalog-grid[data-view='grid'] {
+      column-gap: 0;
+      justify-items: start;
+    }
+  }
+</style>

@@ -1,1 +1,337 @@
-<div class="catalog-filter"></div>
+---
+import Button from '@/components/button.astro'
+import ChevronDown from '@/img/icons/chevron-down.svg'
+
+interface Props {
+  class?: string
+}
+
+const { class: className, ...attrs } = Astro.props
+
+const OPTION_GROUPS = [
+  {
+    legend: 'Электровелосипед',
+    name: 'electric',
+    options: [
+      { label: 'Да', value: 'yes' },
+      { label: 'Нет', value: 'no' },
+    ],
+  },
+  {
+    legend: 'Материал рамы',
+    name: 'frame',
+    options: [
+      { label: 'Сталь', value: 'steel', isChecked: true },
+      { label: 'Карбон', value: 'carbon' },
+    ],
+  },
+  {
+    legend: 'Цвет',
+    name: 'color',
+    options: [
+      { label: 'Чёрный', value: 'black' },
+      { label: 'Коричневый', value: 'brown' },
+      { label: 'Красный', value: 'red' },
+      { label: 'Голубой', value: 'blue' },
+      { label: 'Хаки', value: 'khaki' },
+    ],
+  },
+  {
+    legend: 'Колёса',
+    name: 'wheels',
+    options: [
+      { label: '20”', value: '20' },
+      { label: '22”', value: '22' },
+      { label: '24”', value: '24' },
+      { label: '26”', value: '26' },
+    ],
+  },
+]
+---
+
+<details class:list={['catalog-filter', className]} data-filter {...attrs}>
+  <summary class="toggle small-caps" data-filter-toggle>
+    Фильтры
+    <ChevronDown class="toggle-icon" aria-hidden="true" />
+  </summary>
+
+  <form
+    class="form"
+    id="catalog-filter"
+    action="/catalog/"
+    method="get"
+    aria-labelledby="catalog-filter-title"
+  >
+    <h2 class="visually-hidden" id="catalog-filter-title">Фильтры</h2>
+
+    <fieldset class="group">
+      <legend class="legend small-caps">Цена</legend>
+      <div class="range">
+        <label class="visually-hidden" for="price-from">
+          Цена за велосипед, от
+        </label>
+        <input
+          class="field"
+          id="price-from"
+          name="price-from"
+          type="text"
+          inputmode="numeric"
+          value="28 000"
+        />
+        <label class="visually-hidden" for="price-to">
+          Цена за велосипед, до
+        </label>
+        <input
+          class="field"
+          id="price-to"
+          name="price-to"
+          type="text"
+          inputmode="numeric"
+          value="180 000"
+        />
+      </div>
+    </fieldset>
+
+    {
+      OPTION_GROUPS.map((group) => (
+        <fieldset class="group">
+          <legend class="legend small-caps">{group.legend}</legend>
+          <div class="options">
+            {group.options.map((option) => (
+              <label class="option">
+                <input
+                  class="control"
+                  type="checkbox"
+                  name={group.name}
+                  value={option.value}
+                  checked={option.isChecked}
+                />
+                <span class="box" aria-hidden="true" />
+                {option.label}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      ))
+    }
+
+    <Button class="submit" type="submit">Показать</Button>
+  </form>
+</details>
+
+<style>
+  .toggle {
+    position: relative;
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    padding-block: 13px;
+    border-block-end: var(--rule-width) solid var(--color-rule);
+    font-family: var(--font-head);
+    font-weight: 400;
+    font-size: var(--text-nav-size);
+    line-height: var(--text-nav-leading);
+    letter-spacing: var(--text-nav-tracking);
+    color: var(--color-text-muted);
+    list-style: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    transition: color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  .toggle-icon {
+    margin-block-start: 6px;
+  }
+
+  .catalog-filter[open] .toggle-icon {
+    rotate: 180deg;
+  }
+
+  .toggle:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -2px;
+  }
+
+  .toggle:active {
+    color: var(--color-text);
+    transition-duration: 90ms;
+  }
+
+  .group {
+    min-inline-size: 0;
+    padding-block-end: 14px;
+    border: 0;
+    border-block-end: var(--rule-width) solid var(--color-rule);
+  }
+
+  .legend {
+    padding-block: 15px 17px;
+    font-family: var(--font-head);
+    font-weight: 400;
+    font-size: var(--text-nav-size);
+    line-height: var(--text-nav-leading);
+    letter-spacing: var(--text-nav-tracking);
+    color: var(--color-text-muted);
+  }
+
+  .range {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    inline-size: 182px;
+  }
+
+  .range::before {
+    position: absolute;
+    inset-block-start: 14px;
+    inset-inline-start: 86px;
+    inline-size: 10px;
+    block-size: 1px;
+    background-color: var(--color-text-muted);
+    content: '';
+  }
+
+  .field {
+    inline-size: 76px;
+    block-size: 30px;
+    padding-inline: 9px;
+    border: 1px solid var(--color-text-muted);
+    border-radius: 0;
+    background-color: transparent;
+    font-size: var(--text-body-s-size);
+    line-height: var(--text-body-s-leading);
+    letter-spacing: var(--text-body-tracking);
+    color: var(--color-text-muted);
+    transition: border-color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .field:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    align-items: flex-start;
+  }
+
+  .option {
+    position: relative;
+    display: flex;
+    gap: 11px;
+    align-items: center;
+    block-size: 16px;
+    font-size: var(--text-body-s-size);
+    line-height: var(--text-body-s-leading);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    transition: color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .option::after {
+    position: absolute;
+    inset: -6.5px 0;
+    content: '';
+  }
+
+  .control {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: 16px;
+    block-size: 16px;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .box {
+    position: relative;
+    flex: none;
+    inline-size: 16px;
+    block-size: 16px;
+    border: 1px solid var(--color-text-muted);
+    transition:
+      border-color 180ms cubic-bezier(0.2, 0.8, 0.25, 1),
+      background-color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .box::after {
+    position: absolute;
+    inset: 3px;
+    background-color: var(--color-text-muted);
+    opacity: 0;
+    content: '';
+  }
+
+  .control:checked + .box::after {
+    opacity: 1;
+  }
+
+  .control:focus-visible + .box {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .option:active .box {
+    background-color: color-mix(
+      in srgb,
+      var(--color-text-muted) 12%,
+      transparent
+    );
+    transition-duration: 90ms;
+  }
+
+  .submit {
+    inline-size: 182px;
+    margin-block-start: 24px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .toggle:hover,
+    .option:hover {
+      color: var(--color-text);
+    }
+
+    .option:hover .box,
+    .field:hover {
+      border-color: var(--color-text);
+    }
+  }
+
+  @media (width >= 1179px) {
+    .toggle {
+      display: none;
+    }
+
+    .catalog-filter::details-content {
+      block-size: auto;
+      content-visibility: visible;
+    }
+
+    .group:first-of-type .legend {
+      padding-block-start: 3px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toggle,
+    .field,
+    .option,
+    .box {
+      transition: none;
+    }
+  }
+</style>

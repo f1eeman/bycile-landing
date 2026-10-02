@@ -1,1 +1,184 @@
-<div class="pagination"></div>
+---
+import ArrowLeft from '@/img/icons/arrow-left.svg'
+import ArrowRight from '@/img/icons/arrow-right.svg'
+
+const PAGES = [
+  { label: '1', href: '/catalog/', isCurrent: true },
+  { label: '2', href: '?page=2', isCurrent: false },
+  { label: '3', href: '?page=3', isCurrent: false },
+  { label: '…', href: undefined, isCurrent: false },
+  { label: '26', href: '?page=26', isCurrent: false },
+]
+---
+
+<nav
+  class="pagination content-column"
+  aria-label="Страницы каталога"
+  data-reveal
+>
+  <ul class="pages">
+    <li class="step">
+      <span class="arrow" role="link" aria-disabled="true">
+        <ArrowLeft aria-hidden="true" />
+        <span class="visually-hidden">Предыдущая страница</span>
+      </span>
+    </li>
+    {
+      PAGES.map((page) =>
+        page.href === undefined ? (
+          <li class="gap" aria-hidden="true">
+            {page.label}
+          </li>
+        ) : (
+          <li>
+            <a
+              class="page"
+              href={page.href}
+              aria-current={page.isCurrent ? 'page' : undefined}
+            >
+              {page.label}
+            </a>
+          </li>
+        ),
+      )
+    }
+    <li class="step">
+      <a class="arrow" href="?page=2">
+        <ArrowRight aria-hidden="true" />
+        <span class="visually-hidden">Следующая страница</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<style>
+  .pagination {
+    display: flex;
+    align-items: center;
+    margin-block: 41px 65px;
+    font-family: var(--font-head);
+    font-weight: 400;
+    font-size: var(--text-nav-size);
+    line-height: var(--text-nav-leading);
+    letter-spacing: var(--text-nav-tracking);
+    color: var(--color-text-muted);
+  }
+
+  .pagination::before,
+  .pagination::after {
+    flex: 1;
+    block-size: var(--rule-width);
+    margin-block-end: 2px;
+    background-color: var(--color-rule);
+    content: '';
+  }
+
+  .pages {
+    display: flex;
+    padding-inline: 8px 7px;
+  }
+
+  .page,
+  .arrow,
+  .gap {
+    display: block;
+    padding: 13px 4px;
+  }
+
+  .page::after,
+  a.arrow::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+  }
+
+  .step + li .page::after {
+    inset-inline-start: -11.5px;
+  }
+
+  li:has(+ .gap) .page::after {
+    inset-inline-end: -9.5px;
+  }
+
+  .gap + li .page::after {
+    inset-inline-start: -9.5px;
+  }
+
+  a.arrow::after {
+    inset-inline: -11.5px -12.5px;
+  }
+
+  .arrow {
+    padding-block: 14px 18px;
+  }
+
+  .step:first-child {
+    margin-inline-end: 11.5px;
+  }
+
+  .step:last-child {
+    margin-inline-start: 11.5px;
+  }
+
+  .step:first-child .arrow {
+    padding-inline-start: 10px;
+  }
+
+  .step:last-child .arrow {
+    padding-inline-end: 10px;
+  }
+
+  .page,
+  a.arrow {
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    transition:
+      color 180ms cubic-bezier(0.2, 0.8, 0.25, 1),
+      transform 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  a.arrow :global(svg *) {
+    transition: stroke 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .page[aria-current] {
+    color: var(--color-accent);
+  }
+
+  .page:focus-visible,
+  .arrow:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: -4px;
+  }
+
+  .page:active,
+  a.arrow:active {
+    transform: scale(0.97);
+    transition-duration: 90ms;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .page:not([aria-current]):hover {
+      color: var(--color-text);
+    }
+
+    a.arrow:hover :global(svg *) {
+      stroke: var(--color-text);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page,
+    a.arrow,
+    a.arrow :global(svg *) {
+      transition: none;
+    }
+
+    .page:active,
+    a.arrow:active {
+      transform: none;
+    }
+  }
+</style>

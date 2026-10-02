@@ -1,1 +1,323 @@
-<div class="shop-bar"></div>
+---
+import Cross from '@/img/icons/cross.svg'
+import ChevronDown from '@/img/icons/chevron-down.svg'
+import ViewGrid from '@/img/icons/view-grid.svg'
+import ViewList from '@/img/icons/view-list.svg'
+
+interface Props {
+  class?: string
+}
+
+const { class: className, ...attrs } = Astro.props
+
+const PER_PAGE = [
+  { label: '9', href: '/catalog/', isCurrent: true },
+  { label: '24', href: '?per-page=24', isCurrent: false },
+  { label: 'все', href: '?per-page=all', isCurrent: false },
+]
+---
+
+<div class:list={['shop-bar', className]} {...attrs}>
+  <button class="reset small-caps" type="reset" form="catalog-filter">
+    Сбросить фильтры
+    <Cross class="reset-icon" aria-hidden="true" />
+  </button>
+
+  <div class="sorting">
+    <h2 class="visually-hidden" id="sorting-title">Сортировка карточек</h2>
+
+    <div class="sort">
+      <select class="sort-select small-caps" aria-labelledby="sorting-title">
+        <option>По популярности</option>
+      </select>
+      <ChevronDown class="sort-icon" aria-hidden="true" />
+    </div>
+
+    <div class="display">
+      <div class="per-page">
+        <span class="small-caps" id="per-page-title">Показывать по:</span>
+        <ul class="per-page-list" aria-labelledby="per-page-title">
+          {
+            PER_PAGE.map((option) => (
+              <li class="per-page-item">
+                <a
+                  class="per-page-link small-caps"
+                  href={option.href}
+                  aria-current={option.isCurrent ? 'page' : undefined}
+                >
+                  {option.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="views">
+        <button
+          class="view"
+          type="button"
+          data-view-toggle="grid"
+          aria-controls="catalog-grid"
+          aria-pressed="true"
+        >
+          <ViewGrid aria-hidden="true" />
+          <span class="visually-hidden">Отобразить карточками</span>
+        </button>
+        <button
+          class="view"
+          type="button"
+          data-view-toggle="list"
+          aria-controls="catalog-grid"
+          aria-pressed="false"
+        >
+          <ViewList aria-hidden="true" />
+          <span class="visually-hidden">Отобразить в столбик</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { initViewToggle } from '@/scripts/view-toggle'
+
+  initViewToggle()
+</script>
+
+<style>
+  .shop-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 26px 18px;
+    align-items: flex-start;
+    padding-block: 13px;
+    border-block-end: var(--rule-width) solid var(--color-rule);
+    font-family: var(--font-head);
+    font-weight: 400;
+    font-size: var(--text-nav-size);
+    line-height: var(--text-nav-leading);
+    letter-spacing: var(--text-nav-tracking);
+    white-space: nowrap;
+    color: var(--color-text-muted);
+  }
+
+  .sorting {
+    display: contents;
+  }
+
+  .reset,
+  .sort-select,
+  .per-page-link,
+  .view {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    transition:
+      color 180ms cubic-bezier(0.2, 0.8, 0.25, 1),
+      transform 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .reset,
+  .per-page-link,
+  .view {
+    position: relative;
+  }
+
+  .reset::after,
+  .per-page-link::after,
+  .view::after {
+    position: absolute;
+    inset: -13px -6px;
+    content: '';
+  }
+
+  .per-page-link::after {
+    z-index: 1;
+    inset-inline: -10.5px;
+  }
+
+  .per-page-item:first-child .per-page-link::after {
+    inset-inline-start: -14px;
+  }
+
+  .per-page-item:last-child .per-page-link::after {
+    inset-inline-end: -7.5px;
+  }
+
+  .view:first-child::after {
+    inset-inline-start: -10.5px;
+  }
+
+  .view:last-child::after {
+    inset-inline-end: max(-26px, calc(var(--layout-gutter) * -1));
+  }
+
+  .reset {
+    display: flex;
+    gap: 9px;
+    align-items: flex-start;
+    color: var(--color-accent);
+    text-decoration: underline 1px transparent;
+    text-underline-offset: 4px;
+    transition-property: text-decoration-color, transform;
+  }
+
+  .reset-icon {
+    margin-block-start: 1px;
+  }
+
+  .sort {
+    position: relative;
+  }
+
+  .sort-select {
+    display: block;
+    block-size: 44px;
+    margin-block: -13px;
+    padding-inline: 0 19px;
+    border: 0;
+    border-radius: 0;
+    outline: 0;
+    background-color: transparent;
+    letter-spacing: inherit;
+    color: inherit;
+    appearance: none;
+  }
+
+  .sort-icon {
+    position: absolute;
+    inset-block-start: 4px;
+    inset-inline-end: 0;
+    pointer-events: none;
+  }
+
+  .display {
+    display: flex;
+    gap: 18px;
+    margin-inline-start: auto;
+  }
+
+  .per-page {
+    display: flex;
+    gap: 14px;
+  }
+
+  .per-page-list {
+    display: flex;
+  }
+
+  .per-page-item + .per-page-item {
+    position: relative;
+    padding-inline-start: 21px;
+  }
+
+  .per-page-item + .per-page-item::before {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 10px;
+    inline-size: 1px;
+    block-size: 14px;
+    background-color: var(--color-text-muted);
+    content: '';
+  }
+
+  .per-page-link {
+    display: block;
+  }
+
+  .per-page-link[aria-current] {
+    color: var(--color-accent);
+  }
+
+  .views {
+    display: flex;
+    gap: 12px;
+  }
+
+  .view {
+    display: block;
+    padding-block: 2px 5px;
+  }
+
+  .view :global(svg *) {
+    fill: var(--color-text-muted);
+    transition: fill 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .view[aria-pressed='true'] :global(svg *) {
+    fill: var(--color-accent);
+  }
+
+  .reset:focus-visible,
+  .sort:has(.sort-select:focus-visible),
+  .per-page-link:focus-visible,
+  .view:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  .reset:active,
+  .sort-select:active,
+  .per-page-link:active,
+  .view:active {
+    transform: scale(0.97);
+    transition-duration: 90ms;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .sort-select:hover,
+    .per-page-link:not([aria-current]):hover {
+      color: var(--color-text);
+    }
+
+    .reset:hover {
+      text-decoration-color: currentcolor;
+    }
+
+    .view[aria-pressed='false']:hover :global(svg *) {
+      fill: var(--color-text);
+    }
+  }
+
+  @media (width >= 1179px) {
+    .shop-bar {
+      display: grid;
+      grid-template-columns: subgrid;
+      gap: normal;
+      padding-block: 20px 18px;
+    }
+
+    .sorting {
+      display: flex;
+      align-items: flex-start;
+      padding-inline-start: 23px;
+    }
+
+    .display {
+      gap: 42px;
+    }
+
+    .view:first-child::after {
+      inset-inline-start: -27px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reset,
+    .sort-select,
+    .per-page-link,
+    .view,
+    .view :global(svg *) {
+      transition: none;
+    }
+
+    .reset:active,
+    .sort-select:active,
+    .per-page-link:active,
+    .view:active {
+      transform: none;
+    }
+  }
+</style>

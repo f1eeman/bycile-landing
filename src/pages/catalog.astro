@@ -12,8 +12,43 @@ const description =
 
 <Layout {title} {description} theme="light" current="bikes">
   <h1 class="visually-hidden">Выбор велосипеда</h1>
-  <ShopBar />
-  <CatalogFilter />
-  <CatalogGrid />
-  <Pagination />
+  <div class="container">
+    <div class="catalog wide-row">
+      <ShopBar class="bar" />
+      <CatalogFilter class="filter" />
+      <CatalogGrid class="grid" />
+    </div>
+    <Pagination />
+  </div>
 </Layout>
+
+<style>
+  .catalog {
+    --filter-width: 182px;
+    --cards-width: calc(3 * 224px);
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .grid {
+    margin-block-start: 44px;
+  }
+
+  @media (width >= 1179px) {
+    .catalog {
+      grid-template-columns: var(--filter-width) minmax(0, 1fr);
+      gap: 44px
+        calc((100% - var(--filter-width) - var(--cards-width)) * 101 / 417);
+      align-items: start;
+    }
+
+    .bar {
+      grid-column: 1 / -1;
+    }
+
+    .grid {
+      margin-block-start: 0;
+    }
+  }
+</style>
