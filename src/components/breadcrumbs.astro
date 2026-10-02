@@ -19,7 +19,9 @@ const last = trail.length - 1
               </span>
             )}
             {index === last ? (
-              <span class="current">{label}</span>
+              <span class="current" aria-current="page">
+                {label}
+              </span>
             ) : (
               <a class="link" href="/#parts">
                 {label}

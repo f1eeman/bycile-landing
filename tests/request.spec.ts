@@ -76,6 +76,42 @@ test.describe('форма клуба', () => {
     await expect(nameOf(page)).toHaveValue('Иван')
   })
 
+  test('неполный номер не проходит, ошибка гаснет при вводе', async ({
+    page,
+  }) => {
+    await nameOf(page).fill('Иван')
+    await phoneOf(page).click()
+    await page.keyboard.type('123')
+    await submitOf(page).click()
+
+    await expect(page.locator('#bid-phone-error')).toHaveText(
+      'Введите номер полностью',
+    )
+    await expect(phoneOf(page)).toHaveAttribute('aria-invalid', 'true')
+    await expect(phoneOf(page)).toBeFocused()
+
+    await page.keyboard.type('4')
+
+    await expect(phoneOf(page)).toHaveValue('+7 912 34')
+    await expect(phoneOf(page)).not.toHaveAttribute('aria-invalid')
+  })
+
+  test('Enter на одной предзаполненной девятке просит номер', async ({
+    page,
+  }) => {
+    await nameOf(page).fill('Иван')
+    await phoneOf(page).click()
+
+    await expect(phoneOf(page)).toHaveValue('+7 9')
+
+    await page.keyboard.press('Enter')
+
+    await expect(page.locator('#bid-phone-error')).toHaveText(
+      'Укажите номер телефона',
+    )
+    await expect(phoneOf(page)).toHaveAttribute('aria-invalid', 'true')
+  })
+
   test('неверный e-mail не проходит, с плюсом — проходит', async ({ page }) => {
     await fillValid(page)
     await emailOf(page).fill('ivan@')
@@ -103,6 +139,8 @@ test.describe('форма клуба', () => {
     )
 
     await consentOf(page).check()
+
+    await expect(consentOf(page)).not.toHaveAttribute('aria-invalid')
 
     const logged = page.waitForEvent('console', (message) =>
       message.text().includes('experience'),

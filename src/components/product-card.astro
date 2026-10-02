@@ -133,6 +133,9 @@ const [specStart, specEnd] = product.specs
 
   .link {
     display: block;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
   }
 
   .link::after {
@@ -142,9 +145,26 @@ const [specStart, specEnd] = product.specs
     content: '';
   }
 
+  @media (hover: hover) and (pointer: fine) {
+    .link:hover {
+      color: color-mix(in srgb, var(--color-text) 88%, #fff);
+    }
+  }
+
   .link:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 3px;
+  }
+
+  .link:active {
+    color: color-mix(in srgb, var(--color-text) 85%, #000);
+    transition-duration: 90ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .link {
+      transition: none;
+    }
   }
 
   .specs {

@@ -9,7 +9,10 @@ interface Props {
 }
 
 const { value, max = 5, size } = Astro.props
-const stars = Array.from({ length: max }, (_, index) => index < value)
+const stars = Array.from(
+  { length: max },
+  (_, index) => index < Math.floor(value),
+)
 ---
 
 <span class:list={['rating', `size-${size}`]}>
