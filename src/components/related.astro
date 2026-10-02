@@ -1,1 +1,66 @@
-<div class="related"></div>
+---
+import ProductCard from '@/components/product-card.astro'
+import type { Product } from '@/data/products'
+
+interface Props {
+  products: readonly Product[]
+}
+
+const { products } = Astro.props
+---
+
+<section class="related" aria-labelledby="related-title">
+  <div class="container">
+    <div class="content-column">
+      <h2 class="title" id="related-title" data-reveal>
+        С&nbsp;этим товаром смотрят
+      </h2>
+      <ul class="list" data-reveal data-reveal-stagger>
+        {
+          products.map((product) => (
+            <li>
+              <ProductCard {product} kind="part" heading="h3" />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .related {
+    padding-block: 75px 70px;
+  }
+
+  .title {
+    font-family: var(--font-head);
+    font-weight: 400;
+    font-size: var(--text-heading-size);
+    line-height: var(--text-heading-leading);
+    letter-spacing: var(--text-heading-tracking);
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+
+  .list {
+    display: grid;
+    grid-template-columns: 224px;
+    gap: 32px 58.67px;
+    justify-content: center;
+    margin-block-start: 74px;
+  }
+
+  @media (width >= 575px) {
+    .list {
+      grid-template-columns: repeat(2, 224px);
+    }
+  }
+
+  @media (width >= 1179px) {
+    .list {
+      grid-template-columns: repeat(4, 224px);
+    }
+  }
+</style>

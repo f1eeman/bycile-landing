@@ -11,7 +11,7 @@ const { product, class: className, ...attrs } = Astro.props
 
 <button type="button" class:list={['cart-button', className]} {...attrs}>
   <Cart aria-hidden="true" />
-  <span class="visually-hidden">В корзину {product}</span>
+  <span class="visually-hidden">В&nbsp;корзину {product}</span>
 </button>
 
 <style>

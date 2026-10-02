@@ -1,0 +1,56 @@
+---
+import Star from '@/img/icons/star.svg'
+import StarEmpty from '@/img/icons/star-empty.svg'
+
+interface Props {
+  value: number
+  max?: number
+  size: 'md' | 'sm'
+}
+
+const { value, max = 5, size } = Astro.props
+const stars = Array.from({ length: max }, (_, index) => index < value)
+---
+
+<span class:list={['rating', `size-${size}`]}>
+  <span class="visually-hidden">Оценка: {value} из {max}</span>
+  <span class="stars" aria-hidden="true">
+    {
+      stars.map((filled) =>
+        filled ? <Star class="star" /> : <StarEmpty class="star" />,
+      )
+    }
+  </span>
+</span>
+
+<style>
+  .rating {
+    display: inline-flex;
+  }
+
+  .stars {
+    display: flex;
+  }
+
+  .star {
+    flex: none;
+  }
+
+  .size-md .stars {
+    column-gap: 10px;
+  }
+
+  .size-md .star {
+    inline-size: 18px;
+    block-size: 17px;
+  }
+
+  .size-sm .stars {
+    column-gap: 7.3px;
+  }
+
+  .size-sm .star {
+    inline-size: 11.9px;
+    block-size: 10.9px;
+  }
+</style>

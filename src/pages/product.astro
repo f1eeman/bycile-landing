@@ -4,6 +4,7 @@ import Breadcrumbs from '@/components/breadcrumbs.astro'
 import ProductInfo from '@/components/product-info.astro'
 import ProductTabs from '@/components/product-tabs.astro'
 import Related from '@/components/related.astro'
+import { ACCESSORIES, STEED_G67 } from '@/data/products'
 
 const title = 'Седло Steed G67 — Chopper Bikeshop'
 const description =
@@ -11,9 +12,8 @@ const description =
 ---
 
 <Layout {title} {description} theme="light" current="accessories" cartCount={1}>
-  <h1 class="visually-hidden">Седло Steed G67</h1>
-  <Breadcrumbs />
-  <ProductInfo />
-  <ProductTabs />
-  <Related />
+  <Breadcrumbs trail={STEED_G67.trail} />
+  <ProductInfo product={STEED_G67} />
+  <ProductTabs product={STEED_G67} />
+  <Related products={ACCESSORIES} />
 </Layout>

@@ -1,1 +1,302 @@
-<div class="product-tabs"></div>
+---
+import Button from '@/components/button.astro'
+import Rating from '@/components/rating.astro'
+import type { STEED_G67 } from '@/data/products'
+
+interface Props {
+  product: typeof STEED_G67
+}
+
+const { product } = Astro.props
+
+const TABS = [
+  { key: 'description', label: 'Подробное описание' },
+  { key: 'warranty', label: 'Условия гарантии' },
+  { key: 'reviews', label: 'Отзывы' },
+  { key: 'overviews', label: 'Обзоры' },
+] as const
+
+type TabKey = (typeof TABS)[number]['key']
+
+const SELECTED: TabKey = 'reviews'
+
+const isSelected = (key: TabKey) => key === SELECTED
+---
+
+<div class="product-tabs" data-tabs>
+  <div class="container">
+    <div class="content-column">
+      <div class="body" data-reveal data-reveal-below="1179">
+        <div class="tablist" role="tablist" aria-label="Сведения о товаре">
+          {
+            TABS.map(({ key, label }) => (
+              <button
+                class="tab"
+                type="button"
+                role="tab"
+                id={`tab-${key}`}
+                aria-controls={`panel-${key}`}
+                aria-selected={isSelected(key) ? 'true' : 'false'}
+                tabindex={isSelected(key) ? 0 : -1}
+                data-tabs-tab
+              >
+                {label}
+              </button>
+            ))
+          }
+        </div>
+
+        <div
+          class="panel"
+          role="tabpanel"
+          id="panel-description"
+          aria-labelledby="tab-description"
+          tabindex="0"
+          hidden={!isSelected('description')}
+          data-tabs-panel
+        >
+          <p>{product.description}</p>
+        </div>
+
+        <div
+          class="panel"
+          role="tabpanel"
+          id="panel-warranty"
+          aria-labelledby="tab-warranty"
+          tabindex="0"
+          hidden={!isSelected('warranty')}
+          data-tabs-panel
+        >
+          <p>{product.warranty}</p>
+        </div>
+
+        <div
+          class="panel"
+          role="tabpanel"
+          id="panel-reviews"
+          aria-labelledby="tab-reviews"
+          hidden={!isSelected('reviews')}
+          data-tabs-panel
+        >
+          {
+            product.reviews.map((review) => (
+              <article class="review">
+                <p class="meta">
+                  <span>{review.author}</span>
+                  <time datetime={review.date}>{review.dateLabel}</time>
+                </p>
+                <div class="review-rating">
+                  <Rating value={review.rating} size="sm" />
+                </div>
+                <h2 class="review-title">{review.title}</h2>
+                <p class="review-text">{review.text}</p>
+              </article>
+            ))
+          }
+          <Button
+            class="review-button"
+            type="button"
+            variant="outline"
+            tone="light"
+            size="lg"
+          >
+            Оставить отзыв
+          </Button>
+        </div>
+
+        <div
+          class="panel"
+          role="tabpanel"
+          id="panel-overviews"
+          aria-labelledby="tab-overviews"
+          tabindex="0"
+          hidden={!isSelected('overviews')}
+          data-tabs-panel
+        >
+          <p>Обзоров пока нет.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { initTabs } from '@/scripts/tabs'
+
+  initTabs()
+</script>
+
+<style>
+  .product-tabs {
+    --tab-rule: color-mix(in srgb, var(--color-text-muted) 30%, transparent);
+
+    padding-block-start: 105px;
+  }
+
+  .body {
+    max-inline-size: calc(4 * 273px - 3px);
+  }
+
+  .tablist {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tab {
+    block-size: var(--control-height);
+    padding-block-start: 4px;
+    padding-inline: 8px;
+    border: 1px solid var(--tab-rule);
+    background-color: var(--color-bg);
+    font-family: var(--font-head);
+    font-weight: 400;
+    font-size: var(--text-button-size);
+    line-height: 1;
+    letter-spacing: var(--text-button-tracking);
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-text) 30%, var(--color-bg));
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    transition: color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .tab + .tab {
+    margin-block-start: -1px;
+  }
+
+  .tab[aria-selected='true'] {
+    position: relative;
+    z-index: 1;
+    border-color: var(--color-text-muted);
+    color: var(--color-text);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .tab[aria-selected='false']:hover {
+      color: color-mix(in srgb, var(--color-text) 65%, var(--color-bg));
+    }
+  }
+
+  .tab:focus-visible {
+    position: relative;
+    z-index: 2;
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .tab:active {
+    color: var(--color-text);
+    transition-duration: 90ms;
+  }
+
+  .panel {
+    margin-block-start: -1px;
+    padding: 50px var(--layout-gutter) 61px;
+    border: 1px solid var(--color-text-muted);
+  }
+
+  .panel:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .review {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 10px;
+    font-weight: 300;
+    font-size: var(--text-body-s-size);
+    line-height: var(--text-body-s-leading);
+    color: var(--color-text-muted);
+  }
+
+  .meta time {
+    white-space: nowrap;
+  }
+
+  .review-rating {
+    display: flex;
+    margin-block-start: 7.6px;
+  }
+
+  .review-title {
+    margin-block-start: 24.3px;
+    font-family: var(--font-head);
+    font-weight: 400;
+    font-size: var(--text-title-size);
+    line-height: var(--text-title-leading);
+    letter-spacing: var(--text-title-tracking);
+    text-transform: uppercase;
+  }
+
+  .review-text {
+    margin-block-start: 3.5px;
+  }
+
+  .review-button {
+    max-inline-size: 100%;
+    margin-block-start: 32.5px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tab {
+      transition: none;
+    }
+  }
+
+  @media (width >= 575px) {
+    .tablist {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tab + .tab {
+      margin-block-start: 0;
+    }
+
+    .tab:nth-child(even) {
+      margin-inline-start: -1px;
+    }
+
+    .tab:nth-child(n + 3) {
+      margin-block-start: -1px;
+    }
+  }
+
+  @media (width >= 1179px) {
+    .body {
+      margin-inline-start: 1px;
+    }
+
+    .tablist {
+      display: flex;
+    }
+
+    .tab {
+      flex: 0 1 273px;
+      min-inline-size: 0;
+    }
+
+    .tab:nth-child(n + 3) {
+      margin-block-start: 0;
+    }
+
+    .tab + .tab {
+      margin-inline-start: -1px;
+    }
+
+    .tab[aria-selected='true'] {
+      border-block-end-color: var(--color-bg);
+    }
+
+    .panel {
+      padding-inline: 51px;
+    }
+  }
+</style>

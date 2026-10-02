@@ -1,1 +1,293 @@
-<div class="product-info"></div>
+---
+import { Image } from 'astro:assets'
+import Button from '@/components/button.astro'
+import Price from '@/components/price.astro'
+import Rating from '@/components/rating.astro'
+import type { STEED_G67 } from '@/data/products'
+import BasketInverse from '@/img/icons/basket-inverse.svg'
+import Loupe from '@/img/icons/loupe.svg'
+
+interface Props {
+  product: typeof STEED_G67
+}
+
+const { product } = Astro.props
+const { name, image } = product
+---
+
+<div class="product-info">
+  <div class="container">
+    <div class="layout content-column">
+      <div class="media">
+        <Image
+          class="photo"
+          src={image}
+          alt={name}
+          widths={[320, 510]}
+          sizes="(width >= 525px) 510px, 97.14vw"
+          loading="eager"
+        />
+        <button
+          class="zoom-open"
+          type="button"
+          data-zoom-open
+          aria-controls="zoom"
+          aria-haspopup="dialog"
+        >
+          <Loupe aria-hidden="true" />
+          <span class="visually-hidden">Приблизить</span>
+        </button>
+      </div>
+
+      <div class="details">
+        <h1 class="title">{name}</h1>
+        <p class="score">
+          <Rating value={product.rating} size="md" />
+          <span class="count"
+            >({product.reviewCount}<span class="visually-hidden">
+              отзывов</span
+            >)</span
+          >
+        </p>
+        <Price class="price" size="xl" price={product.price} />
+        <p class="description">{product.description}</p>
+        <p class="warranty">{product.warranty}</p>
+        <Button class="cart" type="button" variant="accent" size="lg">
+          <BasketInverse aria-hidden="true" />
+          В&nbsp;корзину
+        </Button>
+      </div>
+    </div>
+  </div>
+
+  <dialog class="zoom" id="zoom" aria-label={name}>
+    <Button type="button" tone="dark" data-zoom-close>Закрыть</Button>
+    <Image
+      class="zoom-photo"
+      src={image}
+      alt={name}
+      widths={[320, 510]}
+      sizes="min(510px, 100vw)"
+    />
+  </dialog>
+</div>
+
+<script>
+  import { initZoom } from '@/scripts/zoom'
+
+  initZoom()
+</script>
+
+<style>
+  .product-info {
+    container-type: inline-size;
+    padding-block-start: 56.5px;
+  }
+
+  .layout {
+    display: grid;
+  }
+
+  .media {
+    position: relative;
+    justify-self: center;
+    inline-size: min(353px, 100cqi * 353 / 525);
+    aspect-ratio: 353 / 425;
+  }
+
+  .media::before {
+    position: absolute;
+    inset: 0;
+    border: var(--frame-width) solid var(--color-frame);
+    content: '';
+  }
+
+  .photo {
+    position: absolute;
+    inset-block-start: calc(100% * 4 / 425);
+    inset-inline-start: calc(100% * -86 / 353);
+    inline-size: calc(100% * 510 / 353);
+    max-inline-size: none;
+    block-size: auto;
+  }
+
+  .zoom-open {
+    position: absolute;
+    inset-block-end: -25px;
+    inset-inline-start: calc(50% - 25px);
+    inline-size: 50px;
+    block-size: 50px;
+    padding: 12px;
+    background-color: var(--color-text-muted);
+    box-shadow: var(--shadow-raised);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    transition:
+      background-color 180ms cubic-bezier(0.2, 0.8, 0.25, 1),
+      transform 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .zoom-open:hover {
+      transform: translateY(-2px);
+      background-color: color-mix(in srgb, var(--color-text-muted) 88%, #fff);
+    }
+  }
+
+  .zoom-open:focus-visible {
+    transform: translateY(-2px);
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .zoom-open:active {
+    transform: translateY(0) scale(0.97);
+    background-color: color-mix(in srgb, var(--color-text-muted) 85%, #000);
+    transition-duration: 90ms;
+  }
+
+  .details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-block-start: 56.5px;
+  }
+
+  .title {
+    font-family: var(--font-head);
+    font-weight: 400;
+    font-size: var(--text-heading-size);
+    line-height: var(--text-heading-leading);
+    letter-spacing: var(--text-heading-tracking);
+    text-transform: uppercase;
+    color: var(--color-text);
+  }
+
+  .score {
+    display: flex;
+    column-gap: 11px;
+    align-items: flex-start;
+    margin-block-start: 3px;
+  }
+
+  .count {
+    margin-block-start: -3px;
+    line-height: 17px;
+    color: var(--color-text-muted);
+  }
+
+  .price {
+    margin-block-start: 26px;
+  }
+
+  .description {
+    max-inline-size: 480px;
+    margin-block-start: 14.5px;
+  }
+
+  .warranty {
+    margin-block-start: 9.5px;
+    font-size: var(--text-body-s-size);
+    line-height: var(--text-body-s-leading);
+    color: var(--color-accent);
+  }
+
+  .cart {
+    margin-block-start: 43px;
+  }
+
+  .zoom {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-end;
+    max-inline-size: 100%;
+    max-block-size: 100%;
+    margin: auto;
+    border: 0;
+    background: none;
+    overflow: visible;
+  }
+
+  .zoom[open] {
+    display: flex;
+  }
+
+  .zoom::backdrop {
+    background-color: color-mix(
+      in srgb,
+      var(--color-surface-inverse) 85%,
+      transparent
+    );
+  }
+
+  .zoom-photo {
+    inline-size: auto;
+    max-inline-size: 100vw;
+    block-size: auto;
+    max-block-size: calc(100dvh - var(--control-height) - 16px);
+    background-color: var(--color-bg);
+  }
+
+  :global(html:has(#zoom[open])) {
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .zoom[open],
+    .zoom[open]::backdrop {
+      transition: opacity 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+    }
+
+    @starting-style {
+      .zoom[open],
+      .zoom[open]::backdrop {
+        opacity: 0;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zoom-open {
+      transition: none;
+    }
+
+    .zoom-open:focus-visible,
+    .zoom-open:active {
+      transform: none;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .zoom-open:hover {
+        transform: none;
+      }
+    }
+  }
+
+  @media (width >= 1179px) {
+    .layout {
+      grid-template-columns: 353px minmax(0, 1fr);
+      column-gap: 133px;
+      align-items: start;
+      padding-inline-start: 1px;
+    }
+
+    .media {
+      justify-self: start;
+    }
+
+    .photo {
+      inset-inline-start: calc(
+        -1 *
+          min(
+            86px,
+            max(var(--layout-gutter), (100cqi - var(--content-width)) / 2)
+          )
+      );
+    }
+
+    .details {
+      padding-block-start: 2px;
+    }
+  }
+</style>

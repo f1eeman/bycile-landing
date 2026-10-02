@@ -1,1 +1,93 @@
-<div class="breadcrumbs"></div>
+---
+interface Props {
+  trail: readonly string[]
+}
+
+const { trail } = Astro.props
+const last = trail.length - 1
+---
+
+<nav class="breadcrumbs" aria-label="Навигация по разделам">
+  <div class="container">
+    <ol class="list content-column">
+      {
+        trail.map((label, index) => (
+          <li class="item">
+            {index > 0 && (
+              <span class="separator" aria-hidden="true">
+                /
+              </span>
+            )}
+            {index === last ? (
+              <span class="current">{label}</span>
+            ) : (
+              <a class="link" href="/#parts">
+                {label}
+              </a>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</nav>
+
+<style>
+  .breadcrumbs {
+    padding-block-start: 39.5px;
+  }
+
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    font-size: var(--text-body-s-size);
+    line-height: var(--text-body-s-leading);
+    color: var(--color-text-muted);
+  }
+
+  .item {
+    display: flex;
+  }
+
+  .separator {
+    margin-inline: 7.3px;
+  }
+
+  .link {
+    position: relative;
+    color: var(--color-text-muted);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    transition: color 180ms cubic-bezier(0.2, 0.8, 0.25, 1);
+  }
+
+  .link::before {
+    content: '';
+    position: absolute;
+    inset-block: calc(50% - 22px);
+    inset-inline: min(0px, calc(50% - 22px));
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .link:hover {
+      color: var(--color-text);
+    }
+  }
+
+  .link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .link:active {
+    color: color-mix(in srgb, var(--color-text) 85%, #000);
+    transition-duration: 90ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .link {
+      transition: none;
+    }
+  }
+</style>
